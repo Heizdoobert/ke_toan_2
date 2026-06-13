@@ -1,75 +1,92 @@
 # Universal Accounting Data Reconciler
 
-## Local Development (React App)
+Compare, match, and reconcile accounting data from two sources using composite key mapping, full-outer-join alignment, and Excel export.
+
+## Project Structure
+
+This monorepo contains two apps:
+
+| App | Stack | Location |
+|-----|-------|----------|
+| **React App** | Vite + TypeScript + React | `./src/` |
+| **Standalone App** | Express + vanilla JS | `./localhost-project/` |
+
+---
+
+## Quick Start — React App
 
 **Prerequisites:** Node.js
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```bash
+npm install
+# Set GEMINI_API_KEY in .env.local
+npm run dev
+```
 
-## Standalone Express App
+## Quick Start — Standalone App
 
 ```bash
 cd localhost-project
 npm install
 npm start
-# App loads at http://localhost:3000
+# Opens at http://localhost:3000
 ```
 
 ---
 
-## Architecture
-
-### React App (Vite + TypeScript)
+## Architecture — React App
 
 ```
 src/
 ├── context/
-│   └── ReconciliationContext.tsx   — Global state (React Context + Provider)
+│   └── ReconciliationContext.tsx    — Global state (React Context + Provider)
 ├── hooks/
-│   ├── useFileUpload.ts            — File/paste upload controller logic
-│   ├── useReconciliation.ts        — Run reconciliation + export to Excel
-│   └── useSchema.ts                — Schema CRUD + cache restore on mount
+│   ├── useFileUpload.ts             — File/paste upload controller logic
+│   ├── useReconciliation.ts         — Run reconciliation + export to Excel
+│   └── useSchema.ts                 — Schema CRUD + localStorage cache restore
 ├── components/
-│   ├── DataGrid.tsx                 — Editable data grid (view)
-│   ├── SetupPanel.tsx              — Rules mapping configuration panel
-│   └── ExportLocalhost.tsx         — Code exporter accordion
+│   ├── DataGrid.tsx                  — Editable data grid
+│   ├── SetupPanel.tsx               — Rules mapping configuration
+│   └── ExportLocalhost.tsx          — Code exporter accordion
 ├── utils/
-│   ├── reconciler.ts               — Core reconciliation loop (orchestration only)
-│   ├── normalize.ts                — Value normalization (dates, leading zeros)
-│   ├── aggregate.ts                — Group-by aggregation
-│   ├── parser.ts                   — Transactional data parser (strip headers/footers)
-│   ├── validator.ts                — Column type detection + key compatibility warnings
-│   └── exporter.ts                 — Excel 3-sheet export (TODO)
+│   ├── reconciler.ts                — Core reconciliation loop (orchestration only)
+│   ├── normalize.ts                 — Value normalization (dates, leading zeros)
+│   ├── aggregate.ts                 — Group-by aggregation
+│   ├── parser.ts                    — Transactional data parser
+│   ├── validator.ts                 — Column type detection + key compatibility
+│   └── exporter.ts                  — Excel 3-sheet export
 ├── types/
-│   ├── source-data.ts              — SourceData interface
-│   ├── schema.ts                   — ComparisonPair, ReconciliationSchema
-│   ├── result.ts                   — ReconciliationResult, ReconciliationOutput
-│   ├── warning.ts                  — TypeWarning interface
-│   └── index.ts                    — Barrel exports
-├── types.ts                        — Re-exports from types/ barrel
-├── App.tsx                         — Slim orchestration (consumes context + hooks)
-└── main.tsx                        — Entry point, wraps with ReconciliationProvider
+│   ├── source-data.ts               — SourceData interface
+│   ├── schema.ts                    — ComparisonPair, ReconciliationSchema
+│   ├── result.ts                    — ReconciliationResult, ReconciliationOutput
+│   ├── warning.ts                   — TypeWarning interface
+│   └── index.ts                     — Barrel exports
+├── App.tsx                          — Slim orchestration (context + hooks)
+└── main.tsx                         — Entry point, wraps with ReconciliationProvider
 ```
 
-### Standalone App (Express + vanilla JS)
+## Architecture — Standalone App
 
 ```
 localhost-project/
-├── server.js                       — Express server (security headers, error handling)
+├── server.js                        — Express server (security headers, error handling)
 ├── public/
-│   ├── index.html                  — HTML shell
+│   ├── index.html                   — HTML shell
 │   ├── css/
-│   │   └── style.css              — Premium corporate CSS overrides
+│   │   └── style.css               — Premium corporate CSS
 │   └── js/
-│       ├── database.js             — Database class (localStorage persistence)
-│       ├── model.js                — Model class (in-RAM data store + parsing)
-│       ├── view.js                 — View class (DOM rendering + event binding)
-│       ├── controller.js           — Controller class (reconciliation engine)
-│       └── app.js                  — Bootstrap (instantiate MVC, wire events)
+│       ├── database.js              — Database class (localStorage persistence)
+│       ├── model.js                 — Model class (in-RAM data store + parsing)
+│       ├── view.js                  — View class (DOM rendering + event binding)
+│       ├── controller.js            — Controller class (reconciliation engine)
+│       └── app.js                   — Bootstrap (instantiate MVC, wire events)
 └── tests/
-    └── server.test.js              — Express endpoint tests
+    └── server.test.js               — Express endpoint tests
 ```
+
+## Data Flow
+
+1. **Upload**: Paste or upload two CSV/TSV datasets
+2. **Map**: Select columns for composite key and comparison pairs
+3. **Reconcile**: Engine normalizes, matches, and aligns records
+4. **Export**: Download Excel with 3 sheets (a-only, b-only, matched)
