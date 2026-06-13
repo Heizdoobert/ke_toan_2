@@ -164,10 +164,16 @@ class View {
       `;
 
       headers.forEach(col => {
-        const value = row[col] !== undefined ? row[col] : "";
+        const raw = row[col];
+        const isDebitCredit = /nợ|có|debit|credit/i.test(col);
+        let displayVal = (raw !== undefined && raw !== null) ? String(raw) : "";
+        if (isDebitCredit) {
+          const noCommas = displayVal.replace(/,/g, '');
+          if (noCommas && !isNaN(Number(noCommas))) displayVal = noCommas;
+        }
         cellsRaw += `
           <td data-row="${rIdx}" data-col="${col}" class="px-3 py-1.5 border-r border-slate-200 truncate max-w-[140px] relative group cursor-text hover:bg-slate-50 transition">
-            <span class="cell-text-node">${value}</span>
+            <span class="cell-text-node">${displayVal}</span>
           </td>
         `;
       });
@@ -350,14 +356,26 @@ class View {
     `;
 
     const groupByHTML = `
-      <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-center justify-between text-xs mt-2">
-        <div>
-          <span class="font-bold text-slate-700">Tính toán & gom nhóm</span>
-          <p class="text-[10px] text-slate-400 leading-tight">Tổng hợp các mục khớp và tính tổng động.</p>
+      <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex flex-col gap-2 text-xs mt-2">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="font-bold text-slate-700">Tính toán & gom nhóm</span>
+            <p class="text-[10px] text-slate-400 leading-tight" id="group-by-desc">Tổng hợp các mục khớp và tính tổng động.</p>
+          </div>
+          <button id="group-by-toggle-btn" class="relative inline-flex h-5 w-10 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none bg-slate-300">
+            <span id="group-by-bullet" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition duration-200 translate-x-0"></span>
+          </button>
         </div>
-        <button id="group-by-toggle-btn" class="relative inline-flex h-5 w-10 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none bg-slate-300">
-          <span id="group-by-bullet" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition duration-200 translate-x-0"></span>
-        </button>
+        <div id="group-by-function-wrapper" class="${schema.groupByEnabled ? '' : 'hidden'} flex items-center gap-2">
+          <label class="text-[10px] font-medium text-slate-500">Hàm gộp:</label>
+          <select id="group-by-function-select" class="flex-1 px-2 py-1.5 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs focus:border-indigo-500">
+            <option value="sum" ${schema.groupByFunction === 'sum' ? 'selected' : ''}>SUM — Tổng</option>
+            <option value="count" ${schema.groupByFunction === 'count' ? 'selected' : ''}>COUNT — Đếm</option>
+            <option value="average" ${schema.groupByFunction === 'average' ? 'selected' : ''}>AVERAGE — Trung bình</option>
+            <option value="min" ${schema.groupByFunction === 'min' ? 'selected' : ''}>MIN — Tối thiểu</option>
+            <option value="max" ${schema.groupByFunction === 'max' ? 'selected' : ''}>MAX — Tối đa</option>
+          </select>
+        </div>
       </div>
     `;
 
@@ -373,15 +391,26 @@ class View {
 
     const toggleBtn = document.getElementById("group-by-toggle-btn");
     const bullet = document.getElementById("group-by-bullet");
+    const funcWrapper = document.getElementById("group-by-function-wrapper");
     if (schema.groupByEnabled) {
       toggleBtn.className = "relative inline-flex h-5 w-10 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none bg-indigo-600";
       bullet.className = "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition duration-200 translate-x-5";
+      if (funcWrapper) funcWrapper.classList.remove("hidden");
     }
 
     toggleBtn.addEventListener("click", () => {
       schema.groupByEnabled = !schema.groupByEnabled;
       onSchemaChange(schema);
     });
+
+    const funcSelect = document.getElementById("group-by-function-select");
+    if (funcSelect) {
+      // Sync visibility on schema change (called from outside)
+      funcSelect.addEventListener("change", (e) => {
+        schema.groupByFunction = e.target.value;
+        onSchemaChange(schema);
+      });
+    }
 
     cardFields.querySelectorAll(".rules-key-select").forEach(select => {
       select.addEventListener("change", (e) => {

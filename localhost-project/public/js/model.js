@@ -12,7 +12,8 @@ class Model {
       keysA: [""],
       keysB: [""],
       comparePairs: [{ colA: "", colB: "" }],
-      groupByEnabled: false
+      groupByEnabled: false,
+      groupByFunction: 'sum'
     };
 
     this.reconciledResults = [];
@@ -38,6 +39,8 @@ class Model {
       rowObj["Origin_File_Name"] = `Manual_Paste_${side}.csv`;
       rows.push(rowObj);
     }
+
+    rows = this.convertDateColumnsToDDMMYYYY(headers, rows);
 
     if (side === "A") {
       this.sourceA = { headers, rows, fileName: `Manual paste (${rows.length} rows)` };
@@ -105,6 +108,8 @@ class Model {
       combinedRows = [...combinedRows, ...pkg.rows];
     });
 
+    combinedRows = this.convertDateColumnsToDDMMYYYY(masterHeaders, combinedRows);
+
     const label = validFiles.length === 1 
       ? validFiles[0].name 
       : `Consolidated Folder (${validFiles.length} item files)`;
@@ -160,5 +165,68 @@ class Model {
     }
 
     return { headers, rows };
+  }
+
+  convertDateColumnsToDDMMYYYY(headers, rows) {
+    if (!rows || rows.length === 0) return [];
+
+    const dateCols = headers.filter(h => /ngày|date/i.test(h));
+    if (dateCols.length === 0) return rows;
+
+    return rows.map(row => {
+      const newRow = { ...row };
+      dateCols.forEach(col => {
+        const val = newRow[col];
+        if (val === undefined || val === null) {
+          newRow[col] = '';
+          return;
+        }
+
+        // Excel serial date
+        if (typeof val === 'number' && val >= 35000 && val <= 70000) {
+          newRow[col] = this.serialToDDMMYYYY(val);
+          return;
+        }
+
+        const str = String(val).trim();
+        if (!str) {
+          newRow[col] = '';
+          return;
+        }
+
+        // Already formatted
+        if (str.indexOf('/') !== -1 || (str.indexOf('-') !== -1 && str.length !== 8)) {
+          return;
+        }
+
+        // YYYYMMDD
+        if (/^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/.test(str)) {
+          newRow[col] = str.slice(6, 8) + '/' + str.slice(4, 6) + '/' + str.slice(0, 4);
+          return;
+        }
+
+        // DDMMYYYY
+        if (/^(0[1-9]|[12]\d|3[01])(0[1-9]|1[0-2])(19|20)\d{2}$/.test(str)) {
+          newRow[col] = str.slice(0, 2) + '/' + str.slice(2, 4) + '/' + str.slice(4, 8);
+          return;
+        }
+      });
+      return newRow;
+    });
+  }
+
+  serialToDDMMYYYY(serial) {
+    if (serial < 1 || serial > 1000000) return String(serial);
+    try {
+      const days = Math.floor(serial - 25569);
+      const d = new Date(days * 86400 * 1000);
+      if (isNaN(d.getTime())) return String(serial);
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return dd + '/' + mm + '/' + yyyy;
+    } catch {
+      return String(serial);
+    }
   }
 }

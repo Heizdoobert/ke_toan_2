@@ -16,7 +16,13 @@ export function useSchema() {
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
-        if (parsed.schema) updateSchema(parsed.schema);
+        if (parsed.schema) {
+          // Backward compat: old cached schema may lack groupByFunction
+          if (!parsed.schema.groupByFunction) {
+            parsed.schema.groupByFunction = 'sum';
+          }
+          updateSchema(parsed.schema);
+        }
       } catch {
         /* ignore */
       }

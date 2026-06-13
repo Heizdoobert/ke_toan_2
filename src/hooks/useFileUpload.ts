@@ -1,6 +1,6 @@
 import { useCallback, ChangeEvent } from 'react';
 import { useReconciliationContext } from '../context/ReconciliationContext';
-import { extractCleanTransactionalData } from '../utils/parser';
+import { extractCleanTransactionalData, formatDateColumnsDDMMYYYY } from '../utils/parser';
 
 export function useFileUpload(side: 'A' | 'B') {
   const {
@@ -75,6 +75,7 @@ export function useFileUpload(side: 'A' | 'B') {
                       rowsArr,
                       file.name
                     );
+                    clean.rows = formatDateColumnsDDMMYYYY(clean.headers, clean.rows);
                     resolve({
                       headers: clean.headers,
                       rows: clean.rows,
@@ -102,6 +103,7 @@ export function useFileUpload(side: 'A' | 'B') {
                       rowsArr,
                       file.name
                     );
+                    clean.rows = formatDateColumnsDDMMYYYY(clean.headers, clean.rows);
                     resolve({
                       headers: clean.headers,
                       rows: clean.rows,
@@ -218,15 +220,16 @@ export function useFileUpload(side: 'A' | 'B') {
         rows.push(rowObj);
       }
 
-      const descLabel = `Ctrl+V input (${rows.length} rows)`;
+      const convertedRows = formatDateColumnsDDMMYYYY(headers, rows);
+      const descLabel = `Ctrl+V input (${convertedRows.length} rows)`;
       if (side === 'A') {
-        setSourceA({ headers, rows, fileName: descLabel });
+        setSourceA({ headers, rows: convertedRows, fileName: descLabel });
         setLoadedHeadersA(headers);
         if (headers.length > 0 && !state.schema.keysA[0]) {
           updateSchema({ ...state.schema, keysA: [headers[0]] });
         }
       } else {
-        setSourceB({ headers, rows, fileName: descLabel });
+        setSourceB({ headers, rows: convertedRows, fileName: descLabel });
         setLoadedHeadersB(headers);
         if (headers.length > 0 && !state.schema.keysB[0]) {
           updateSchema({ ...state.schema, keysB: [headers[0]] });

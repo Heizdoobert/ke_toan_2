@@ -18,7 +18,7 @@ export function reconcileDataSources(
 ): { results: ReconciliationResult[]; executionTimeMs: number } {
   const startTime = performance.now();
 
-  const { keysA, keysB, comparePairs, groupByEnabled } = schema;
+  const { keysA, keysB, comparePairs, groupByEnabled, groupByFunction } = schema;
   const numPairs = Math.min(keysA.length, keysB.length);
 
   if (numPairs === 0) {
@@ -34,8 +34,8 @@ export function reconcileDataSources(
   let processedB = rowsB;
 
   if (groupByEnabled) {
-    processedA = handleAggregateGroupBy(rowsA, keysA, numericA, true);
-    processedB = handleAggregateGroupBy(rowsB, keysB, numericB, false);
+    processedA = handleAggregateGroupBy(rowsA, keysA, numericA, true, groupByFunction);
+    processedB = handleAggregateGroupBy(rowsB, keysB, numericB, false, groupByFunction);
   }
 
   // Hash map indexes

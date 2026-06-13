@@ -1,10 +1,13 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * DataGrid — editable spreadsheet component styled like Microsoft Excel.
+ * Features: row numbers, grid borders, auto number alignment, inline editing.
  */
 
-import React, { useState } from "react";
-import { Plus, Trash2, Edit2, Check, FileSpreadsheet, X } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { Plus, Trash2, FileSpreadsheet, X } from "lucide-react";
 
 interface DataGridProps {
   title: string;
@@ -33,6 +36,44 @@ export default function DataGrid({
   const [showAddColModal, setShowAddColModal] = useState(false);
   const [newColName, setNewColName] = useState("");
 
+  // Detect if a column primarily contains numeric data (for right-alignment)
+  const numericCols = useMemo(() => {
+    const numSet = new Set<string>();
+    headers.forEach(h => {
+      const nonEmpty = rows.filter(r => r[h] !== undefined && r[h] !== null && r[h] !== "");
+      if (nonEmpty.length === 0) return;
+      const numericCount = nonEmpty.filter(r => !isNaN(Number(r[h]))).length;
+      if (numericCount / nonEmpty.length > 0.7) {
+        numSet.add(h);
+      }
+    });
+    return numSet;
+  }, [headers, rows]);
+
+  // Detect debit/credit columns by header name — display as plain numbers without commas
+  const debitCreditCols = useMemo(() => {
+    const cols = new Set<string>();
+    headers.forEach(h => {
+      if (/nợ|có|debit|credit/i.test(h)) cols.add(h);
+    });
+    return cols;
+  }, [headers]);
+
+  /** Strip commas from a value if the result is a valid number (for debit/credit columns) */
+  const formatPlainNumber = (value: any, colName: string): string => {
+    if (value === undefined || value === null) return "";
+    let str = String(value);
+    if (debitCreditCols.has(colName)) {
+      const noCommas = str.replace(/,/g, "");
+      if (noCommas && !isNaN(Number(noCommas))) {
+        return noCommas;
+      }
+    }
+    return str;
+  };
+
+  // ─── Cell Editing ───
+
   const handleCellClick = (rowIndex: number, colName: string, value: any) => {
     setEditingCell({ rowIndex, colName });
     setEditValue(value !== undefined ? String(value) : "");
@@ -56,12 +97,11 @@ export default function DataGrid({
     }
   };
 
-  // Row Manipulation
+  // ─── Row Manipulation ───
+
   const handleAddRow = () => {
     const newRow: Record<string, any> = {};
-    headers.forEach(h => {
-      newRow[h] = "";
-    });
+    headers.forEach(h => { newRow[h] = ""; });
     newRow["Origin_File_Name"] = fileName || `${sourceLabel}_Manual`;
     const updatedRows = [...rows, newRow];
     onUpdateData([...headers], updatedRows);
@@ -76,11 +116,8 @@ export default function DataGrid({
 
   const toggleRowSelect = (idx: number) => {
     const updated = new Set(selectedRows);
-    if (updated.has(idx)) {
-      updated.delete(idx);
-    } else {
-      updated.add(idx);
-    }
+    if (updated.has(idx)) updated.delete(idx);
+    else updated.add(idx);
     setSelectedRows(updated);
   };
 
@@ -92,7 +129,8 @@ export default function DataGrid({
     }
   };
 
-  // Column Manipulation
+  // ─── Column Manipulation ───
+
   const handleAddColumn = () => {
     const cleanedName = newColName.trim();
     if (!cleanedName) return;
@@ -100,12 +138,8 @@ export default function DataGrid({
       alert("Column already exists.");
       return;
     }
-    
     const updatedHeaders = [...headers, cleanedName];
-    const updatedRows = rows.map(r => ({
-      ...r,
-      [cleanedName]: ""
-    }));
+    const updatedRows = rows.map(r => ({ ...r, [cleanedName]: "" }));
     onUpdateData(updatedHeaders, updatedRows);
     setNewColName("");
     setShowAddColModal(false);
@@ -116,9 +150,7 @@ export default function DataGrid({
     const updatedHeaders = headers.filter(h => !selectedCols.has(h));
     const updatedRows = rows.map(r => {
       const copy = { ...r };
-      selectedCols.forEach(col => {
-        delete copy[col];
-      });
+      selectedCols.forEach(col => { delete copy[col]; });
       return copy;
     });
     onUpdateData(updatedHeaders, updatedRows);
@@ -127,173 +159,195 @@ export default function DataGrid({
 
   const toggleColSelect = (h: string) => {
     const updated = new Set(selectedCols);
-    if (updated.has(h)) {
-      updated.delete(h);
-    } else {
-      updated.add(h);
-    }
+    if (updated.has(h)) updated.delete(h);
+    else updated.add(h);
     setSelectedCols(updated);
   };
 
+  // ─── Excel-style Formatting Helpers ───
+
+  const isNumericCell = (colName: string): boolean => numericCols.has(colName);
+  const isRowSelected = (idx: number): boolean => selectedRows.has(idx);
+  const isColSelected = (col: string): boolean => selectedCols.has(col);
+
+  const excelBorder = "border-r border-b border-[#d4d4d4]";
+
   return (
-    <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full" id={`datacontainer-${sourceLabel}`}>
-      {/* Header Panel */}
-      <div className="bg-slate-900 px-4 py-3 text-white flex items-center justify-between border-b border-slate-700">
-        <div className="flex items-center gap-2">
-          <FileSpreadsheet className="h-5 w-5 text-indigo-400" />
+    <div className="bg-white rounded-lg border border-[#d4d4d4] shadow-sm overflow-hidden flex flex-col h-full font-sans" id={`datacontainer-${sourceLabel}`}>
+      {/* ─── Excel-style Ribbon Header ─── */}
+      <div className="bg-[#217346] px-4 py-2.5 text-white flex items-center justify-between select-none">
+        <div className="flex items-center gap-2.5">
+          <FileSpreadsheet className="h-5 w-5 text-white/90" />
           <div>
             <h3 className="font-semibold text-sm tracking-tight">{title}</h3>
-            <p className="text-[11px] text-slate-400 font-mono truncate max-w-[200px] sm:max-w-[350px]">
-              {fileName ? `${fileName} (${rows.length} dòng)` : "Chưa tải dữ liệu"}
+            <p className="text-[11px] text-white/70 font-mono truncate max-w-[200px] sm:max-w-[350px]">
+              {fileName ? `${fileName} (${rows.length} rows)` : "No data loaded"}
             </p>
           </div>
         </div>
-        
         {headers.length > 0 && (
           <button
             onClick={onClear}
-            className="text-[11px] bg-slate-800 text-slate-300 hover:text-white px-2 py-1 rounded border border-slate-700 transition"
+            className="text-[11px] bg-white/15 hover:bg-white/25 text-white px-2.5 py-1 rounded border border-white/20 transition"
             id={`clear-${sourceLabel}`}
           >
-            Đặt lại
+            Reset
           </button>
         )}
       </div>
 
+      {/* ─── Empty State ─── */}
       {headers.length === 0 ? (
-        <div className="p-8 text-center text-slate-400 flex flex-col items-center justify-center flex-1 h-64 font-sans">
-          <FileSpreadsheet className="h-10 w-10 text-slate-300 mb-2 stroke-1" />
-          <p className="text-sm">Tải lên Excel, CSV, dán dữ liệu hoặc thả thư mục</p>
+        <div className="p-8 text-center text-[#999] flex flex-col items-center justify-center flex-1 h-64">
+          <FileSpreadsheet className="h-10 w-10 text-[#ccc] mb-2 stroke-1" />
+          <p className="text-sm">Upload Excel, CSV, paste data or drop folder</p>
         </div>
       ) : (
         <div className="flex flex-col flex-grow min-h-0">
-          {/* Action Toolbar */}
-          <div className="bg-slate-50 border-b border-slate-200 px-3 py-2 flex flex-wrap gap-2 items-center justify-between text-xs font-sans">
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={handleAddRow}
-                className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded border border-slate-200 shadow-xs font-medium cursor-pointer"
-                id={`addrow-${sourceLabel}`}
-              >
-                <Plus className="h-3.5 w-3.5 text-slate-500" /> Thêm dòng
-              </button>
-              
-              <button
-                type="button"
-                onClick={handleDeleteCheckedRows}
-                disabled={selectedRows.size === 0}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded border shadow-xs font-medium transition ${
-                  selectedRows.size > 0
-                    ? "bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100 cursor-pointer"
-                    : "bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed"
-                }`}
-                id={`delrow-${sourceLabel}`}
-              >
-                <Trash2 className="h-3.5 w-3.5" /> Xoá dòng ({selectedRows.size})
-              </button>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setShowAddColModal(true)}
-                className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded border border-slate-200 shadow-xs font-medium cursor-pointer"
-                id={`addcol-${sourceLabel}`}
-              >
-                <Plus className="h-3.5 w-3.5 text-slate-500" /> Thêm cột
-              </button>
-              
-              <button
-                type="button"
-                onClick={handleDeleteCheckedCols}
-                disabled={selectedCols.size === 0}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded border shadow-xs font-medium transition ${
-                  selectedCols.size > 0
-                    ? "bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100 cursor-pointer"
-                    : "bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed"
-                }`}
-                id={`delcol-${sourceLabel}`}
-              >
-                <Trash2 className="h-3.5 w-3.5" /> Xoá cột ({selectedCols.size})
-              </button>
-            </div>
+          {/* ─── Excel-style Formula Bar / Toolbar ─── */}
+          <div className="bg-[#f8f8f8] border-b border-[#d4d4d4] px-3 py-1.5 flex flex-wrap gap-1.5 items-center text-xs">
+            <button
+              type="button"
+              onClick={handleAddRow}
+              className="flex items-center gap-1 bg-white hover:bg-[#e8e8e8] text-[#333] px-2 py-1 rounded-sm border border-[#d4d4d4] cursor-pointer"
+              id={`addrow-${sourceLabel}`}
+            >
+              <Plus className="h-3 w-3" /> Row
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteCheckedRows}
+              disabled={selectedRows.size === 0}
+              className={`flex items-center gap-1 px-2 py-1 rounded-sm border transition ${
+                selectedRows.size > 0
+                  ? "bg-white hover:bg-[#fce8e8] text-[#c44] border-[#d4d4d4] cursor-pointer"
+                  : "bg-[#f8f8f8] text-[#bbb] border-[#eee] cursor-not-allowed"
+              }`}
+              id={`delrow-${sourceLabel}`}
+            >
+              <Trash2 className="h-3 w-3" /> Delete ({selectedRows.size})
+            </button>
+            <span className="w-px h-4 bg-[#d4d4d4] mx-0.5" />
+            <button
+              type="button"
+              onClick={() => setShowAddColModal(true)}
+              className="flex items-center gap-1 bg-white hover:bg-[#e8e8e8] text-[#333] px-2 py-1 rounded-sm border border-[#d4d4d4] cursor-pointer"
+              id={`addcol-${sourceLabel}`}
+            >
+              <Plus className="h-3 w-3" /> Column
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteCheckedCols}
+              disabled={selectedCols.size === 0}
+              className={`flex items-center gap-1 px-2 py-1 rounded-sm border transition ${
+                selectedCols.size > 0
+                  ? "bg-white hover:bg-[#fce8e8] text-[#c44] border-[#d4d4d4] cursor-pointer"
+                  : "bg-[#f8f8f8] text-[#bbb] border-[#eee] cursor-not-allowed"
+              }`}
+              id={`delcol-${sourceLabel}`}
+            >
+              <Trash2 className="h-3 w-3" /> Delete ({selectedCols.size})
+            </button>
           </div>
 
-          {/* Table Container */}
-          <div className="overflow-auto flex-grow max-h-[350px]">
-            <table className="w-full text-[11px] border-collapse bg-white font-sans text-left">
-              <thead className="bg-slate-100 sticky top-0 z-10 border-b border-slate-200 text-slate-600 font-medium">
+          {/* ─── Excel-style Grid ─── */}
+          <div className="overflow-auto flex-grow max-h-[350px]" style={{ fontFamily: "'Segoe UI', 'Calibri', 'Arial', sans-serif" }}>
+            <table className="w-full text-[11px] border-collapse bg-white">
+              {/* ─── Excel-style Column Header Row ─── */}
+              <thead>
                 <tr>
-                  {/* Select Row Column Header */}
-                  <th className="w-10 px-2 text-center select-none border-r border-slate-200">
-                    <input
-                      type="checkbox"
-                      checked={rows.length > 0 && selectedRows.size === rows.length}
-                      onChange={toggleAllRows}
-                      className="rounded border-slate-300 text-slate-900 focus:ring-slate-500 h-3.5 w-3.5 cursor-pointer"
-                    />
+                  {/* Corner cell (Excel-style top-left corner) */}
+                  <th className={`w-9 min-w-[36px] bg-[#f0f0f0] sticky top-0 z-20 ${excelBorder} p-0`}>
+                    <div className="flex items-center justify-center h-full">
+                      <input
+                        type="checkbox"
+                        checked={rows.length > 0 && selectedRows.size === rows.length}
+                        onChange={toggleAllRows}
+                        className="rounded border-[#999] text-[#217346] focus:ring-[#217346] h-3 w-3 cursor-pointer"
+                      />
+                    </div>
                   </th>
-                  
-                  {/* Data Column Headers */}
+                  {/* Row number column header (Excel gray area) */}
+                  <th className={`w-10 min-w-[40px] bg-[#f0f0f0] sticky top-0 z-20 ${excelBorder} text-center text-[10px] text-[#666] font-medium select-none`}>
+                    #
+                  </th>
+                  {/* Data column headers */}
                   {headers.map((h) => (
                     <th
                       key={h}
-                      className={`px-3 py-2 border-r border-slate-200 font-medium whitespace-nowrap min-w-[120px] select-none transition ${
-                        selectedCols.has(h) ? "bg-indigo-50 text-indigo-700" : ""
+                      className={`bg-[#f0f0f0] sticky top-0 z-20 px-2 py-1.5 ${excelBorder} font-semibold text-[#333] whitespace-nowrap select-none transition min-w-[90px] ${
+                        isColSelected(h) ? "bg-[#e4ecf7]" : ""
                       }`}
                     >
-                      <div className="flex items-center gap-1.5 justify-between">
-                        <label className="flex items-center gap-1.5 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={selectedCols.has(h)}
-                            onChange={() => toggleColSelect(h)}
-                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5"
-                          />
-                          <span className="truncate max-w-[110px]">{h}</span>
-                        </label>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="checkbox"
+                          checked={selectedCols.has(h)}
+                          onChange={() => toggleColSelect(h)}
+                          className="rounded border-[#999] text-[#217346] focus:ring-[#217346] h-3 w-3 shrink-0"
+                        />
+                        <span className="truncate">{h}</span>
                       </div>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {rows.map((row, rIdx) => (
-                  <tr
-                    key={rIdx}
-                    className={`hover:bg-slate-55 transition-colors ${
-                      selectedRows.has(rIdx) ? "bg-slate-50" : ""
-                    }`}
-                  >
-                    {/* Row checkbox */}
-                    <td className="px-2 py-1.5 text-center border-r border-slate-200 select-none">
-                      <input
-                        type="checkbox"
-                        checked={selectedRows.has(rIdx)}
-                        onChange={() => toggleRowSelect(rIdx)}
-                        className="rounded border-slate-300 text-slate-700 focus:ring-slate-500 h-3.5 w-3.5 cursor-pointer"
-                      />
-                    </td>
-                    
-                    {/* Row value cells */}
-                    {headers.map((h) => {
-                      const value = row[h];
-                      const isEditing =
-                        editingCell &&
-                        editingCell.rowIndex === rIdx &&
-                        editingCell.colName === h;
+              <tbody>
+                {rows.map((row, rIdx) => {
+                  const rowSelected = isRowSelected(rIdx);
+                  const rowBg = rowSelected
+                    ? "bg-[#e4ecf7]"
+                    : rIdx % 2 === 0
+                      ? "bg-white"
+                      : "bg-[#f8f9fa]";
 
-                      return (
-                        <td
-                          key={h}
-                          onClick={() => handleCellClick(rIdx, h, value)}
-                          className={`px-3 py-1.5 border-r border-slate-200 truncate max-w-[150px] relative group cursor-text transition ${
-                            isEditing ? "p-0.5 bg-sky-50" : "hover:bg-slate-50"
-                          }`}
-                        >
-                          {isEditing ? (
-                            <div className="flex items-center gap-1 w-full">
+                  return (
+                    <tr
+                      key={rIdx}
+                      className={`${rowBg} transition-colors`}
+                    >
+                      {/* Checkbox cell */}
+                      <td className={`w-9 min-w-[36px] bg-[#f5f5f5] text-center ${excelBorder} p-0 ${rowSelected ? 'bg-[#dce6f1]' : ''}`}>
+                        <div className="flex items-center justify-center h-full">
+                          <input
+                            type="checkbox"
+                            checked={rowSelected}
+                            onChange={() => toggleRowSelect(rIdx)}
+                            className="rounded border-[#999] text-[#217346] focus:ring-[#217346] h-3 w-3 cursor-pointer"
+                          />
+                        </div>
+                      </td>
+                      {/* Excel-style row number */}
+                      <td
+                        className={`w-10 min-w-[40px] bg-[#f5f5f5] text-center ${excelBorder} text-[10px] text-[#666] select-none cursor-pointer ${
+                          rowSelected ? 'bg-[#dce6f1] font-semibold text-[#333]' : ''
+                        }`}
+                        onClick={() => toggleRowSelect(rIdx)}
+                        title={rowSelected ? "Deselect row" : "Select row"}
+                      >
+                        {rIdx + 1}
+                      </td>
+                      {/* Data cells */}
+                      {headers.map((h) => {
+                        const value = row[h];
+                        const isEditing =
+                          editingCell &&
+                          editingCell.rowIndex === rIdx &&
+                          editingCell.colName === h;
+                        const numeric = isNumericCell(h);
+
+                        return (
+                          <td
+                            key={h}
+                            onClick={() => !isEditing && handleCellClick(rIdx, h, value)}
+                            className={`px-2 py-1 ${excelBorder} max-w-[180px] relative group cursor-text ${
+                              numeric ? "text-right" : "text-left"
+                            } ${isEditing ? "p-0" : ""}
+                              ${rowSelected ? "bg-[#e4ecf7]" : ""}`}
+                            style={isEditing ? { overflow: 'visible' } : {}}
+                          >
+                            {isEditing ? (
                               <input
                                 type="text"
                                 value={editValue}
@@ -301,66 +355,67 @@ export default function DataGrid({
                                 onBlur={() => handleCellSave(rIdx, h)}
                                 onKeyDown={(e) => handleKeyPress(e, rIdx, h)}
                                 autoFocus
-                                className="w-full px-1.5 py-1 text-xs border border-sky-400 bg-white rounded outline-none focus:ring-1 focus:ring-sky-500"
+                                className={`w-full px-1.5 py-1 text-[11px] border-2 border-[#217346] bg-white outline-none ${
+                                  numeric ? "text-right" : "text-left"
+                                }`}
+                                style={{ fontFamily: "'Segoe UI', 'Calibri', 'Arial', sans-serif" }}
                               />
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="truncate">{value !== undefined ? String(value) : ""}</span>
-                              <Edit2 className="h-2.5 w-2.5 text-slate-400 opacity-0 group-hover:opacity-100 transition absolute right-2" />
-                            </div>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                            ) : (
+                              <div className="flex items-center justify-between gap-1 min-h-[18px]">
+                                <span className={`truncate ${numeric ? "w-full text-right tabular-nums" : ""}`}>
+                                  {formatPlainNumber(value, h)}
+                                </span>
+                              </div>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         </div>
       )}
 
-      {/* Add Column overlay Modal */}
+      {/* ─── Add Column Modal ─── */}
       {showAddColModal && (
-        <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-lg border border-slate-300 shadow-xl max-w-sm w-full p-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h4 className="font-semibold text-sm text-slate-800">Thêm cột mới</h4>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-lg border border-[#d4d4d4] shadow-xl max-w-sm w-full p-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#e8e8e8]">
+              <h4 className="font-semibold text-sm text-[#333]">Add Column</h4>
               <button
                 onClick={() => setShowAddColModal(false)}
-                className="text-slate-400 hover:text-slate-600 transition"
+                className="text-[#999] hover:text-[#333] transition"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            
             <div className="my-4">
-              <label className="block text-xs font-medium text-slate-500 mb-1">
-                  Tên cột
-              </label>
+              <label className="block text-xs font-medium text-[#666] mb-1">Column name</label>
               <input
                 type="text"
-                placeholder="VD: Transaction_ID, Amount_USD"
+                placeholder="e.g. Transaction_ID, Amount_USD"
                 value={newColName}
                 onChange={(e) => setNewColName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddColumn()}
-                className="w-full px-3 py-2 border border-slate-300 rounded text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-3 py-2 border border-[#d4d4d4] rounded text-xs focus:ring-2 focus:ring-[#217346] outline-none"
+                autoFocus
               />
             </div>
-            
             <div className="flex justify-end gap-2 text-xs">
               <button
                 onClick={() => setShowAddColModal(false)}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 font-medium"
+                className="px-3 py-1.5 bg-[#f0f0f0] hover:bg-[#e0e0e0] rounded text-[#333] font-medium"
               >
-                Huỷ
+                Cancel
               </button>
               <button
                 onClick={handleAddColumn}
-                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-medium"
+                className="px-3 py-1.5 bg-[#217346] hover:bg-[#1a5c38] text-white rounded font-medium"
               >
-                Xác nhận
+                OK
               </button>
             </div>
           </div>

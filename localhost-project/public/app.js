@@ -12,7 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Restore rule mappings state from Local JSON database on startup (F5 recall)
   const cachedRules = Database.restoreConfig();
   if (cachedRules) {
-    if (cachedRules.schema) model.schema = cachedRules.schema;
+    if (cachedRules.schema) {
+      model.schema = cachedRules.schema;
+      if (!model.schema.groupByFunction) model.schema.groupByFunction = 'sum';
+    }
     if (cachedRules.headersA) view.renderPreviewGrid("A", cachedRules.headersA, [], (h, r) => {
       model.sourceA.headers = h;
       model.sourceA.rows = r;
@@ -177,7 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
       keysA: [""],
       keysB: [""],
       comparePairs: [{ colA: "", colB: "" }],
-      groupByEnabled: false
+      groupByEnabled: false,
+      groupByFunction: 'sum'
     };
     model.reconciledResults = [];
     model.elapsedTimeMs = 0;

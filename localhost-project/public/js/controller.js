@@ -12,12 +12,47 @@ class Controller {
   normalizeValue(val) {
     if (val === undefined || val === null) return "";
 
-    if (typeof val === "number" && val >= 35000 && val <= 70000) {
-      return this.excelSerialDateToISOString(val);
+    if (typeof val === "number") {
+      if (val >= 35000 && val <= 70000) {
+        return this.excelSerialDateToISOString(val);
+      }
+      return String(val).trim().replace(/^0+/, "") || "0";
     }
 
-    const str = String(val).trim();
-    return str.replace(/^0+/, "") || "0";
+    let str = String(val).trim();
+    if (!str) return "";
+
+    // ISO format: YYYY-MM-DD or YYYY/MM/DD
+    const isoDateRegex = /^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/;
+    const slashesDateRegex = /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/;
+
+    if (isoDateRegex.test(str)) {
+      const match = str.match(isoDateRegex);
+      if (match) {
+        return `${match[1]}-${match[2].padStart(2, "0")}-${match[3].padStart(2, "0")}`;
+      }
+    } else if (slashesDateRegex.test(str)) {
+      const match = str.match(slashesDateRegex);
+      if (match) {
+        // Vietnamese locale: DD/MM/YYYY primary, MM/DD/YYYY fallback
+        const part1 = parseInt(match[1], 10);
+        const part2 = parseInt(match[2], 10);
+        const year = match[3];
+
+        // Try DD/MM/YYYY first (Vietnam)
+        if (part2 >= 1 && part2 <= 12 && part1 >= 1 && part1 <= 31) {
+          return `${year}-${String(part2).padStart(2, "0")}-${String(part1).padStart(2, "0")}`;
+        }
+
+        // Fallback: MM/DD/YYYY
+        if (part1 >= 1 && part1 <= 12 && part2 >= 1 && part2 <= 31) {
+          return `${year}-${String(part1).padStart(2, "0")}-${String(part2).padStart(2, "0")}`;
+        }
+      }
+    }
+
+    const stripped = str.replace(/^0+/, "");
+    return stripped || "0";
   }
 
   excelSerialDateToISOString(serial) {
@@ -77,7 +112,7 @@ class Controller {
     const elapsedStart = performance.now();
     this.view.updateProgressSlider(25);
 
-    const { keysA, keysB, comparePairs, groupByEnabled } = this.model.schema;
+    const { keysA, keysB, comparePairs, groupByEnabled, groupByFunction } = this.model.schema;
     const minKeysCount = Math.min(keysA.length, keysB.length);
     if (minKeysCount === 0 || !keysA[0] || !keysB[0]) {
       alert("Vui lòng chọn ít nhất một cặp khoá đối soát.");
@@ -94,8 +129,8 @@ class Controller {
     let processedRowsB = this.model.sourceB.rows;
 
     if (groupByEnabled) {
-      processedRowsA = this.aggregateDataGroup(processedRowsA, keysA, targetNumericA);
-      processedRowsB = this.aggregateDataGroup(processedRowsB, keysB, targetNumericB);
+      processedRowsA = this.aggregateDataGroup(processedRowsA, keysA, targetNumericA, groupByFunction || 'sum');
+      processedRowsB = this.aggregateDataGroup(processedRowsB, keysB, targetNumericB, groupByFunction || 'sum');
     }
 
     this.view.updateProgressSlider(75);
@@ -204,7 +239,7 @@ class Controller {
     this.view.renderReconciliationReport(reconciliationSummary, this.model.elapsedTimeMs, this.model.schema);
   }
 
-  aggregateDataGroup(rows, groupKeys, sumCols) {
+  aggregateDataGroup(rows, groupKeys, sumCols, aggFunction) {
     const groups = {};
 
     rows.forEach(row => {
@@ -216,29 +251,72 @@ class Controller {
         groupKeys.forEach(k => keyVals[k] = row[k]);
 
         const sumsObj = {};
-        sumCols.forEach(c => sumsObj[c] = Number(row[c]) || 0);
+        const countsObj = {};
+        const minsObj = {};
+        const maxsObj = {};
+
+        sumCols.forEach(c => {
+          const num = Number(row[c]);
+          const valid = row[c] !== null && row[c] !== undefined && !isNaN(num);
+          sumsObj[c] = valid ? num : 0;
+          countsObj[c] = valid ? 1 : 0;
+          minsObj[c] = valid ? num : Infinity;
+          maxsObj[c] = valid ? num : -Infinity;
+        });
 
         groups[compositeId] = {
           keyVals,
           sums: sumsObj,
+          counts: countsObj,
+          mins: minsObj,
+          maxs: maxsObj,
+          rowsCount: 1,
           originFiles: new Set(origin ? [origin] : [])
         };
       } else {
+        const g = groups[compositeId];
         sumCols.forEach(c => {
-          const v = Number(row[c]);
-          if (!isNaN(v)) {
-            groups[compositeId].sums[c] += v;
+          const num = Number(row[c]);
+          const valid = row[c] !== null && row[c] !== undefined && !isNaN(num);
+          if (valid) {
+            g.sums[c] += num;
+            g.counts[c] += 1;
+            if (num < g.mins[c]) g.mins[c] = num;
+            if (num > g.maxs[c]) g.maxs[c] = num;
           }
         });
-        if (origin) groups[compositeId].originFiles.add(origin);
+        g.rowsCount += 1;
+        if (origin) g.originFiles.add(origin);
       }
     });
 
     return Object.values(groups).map(g => {
-      const rowItem = { ...g.keyVals, ...g.sums };
+      const rowItem = { ...g.keyVals };
+
+      sumCols.forEach(c => {
+        switch (aggFunction || 'sum') {
+          case 'sum':
+            rowItem[c] = g.sums[c];
+            break;
+          case 'count':
+            rowItem[c] = g.counts[c];
+            break;
+          case 'average':
+            rowItem[c] = g.counts[c] > 0 ? g.sums[c] / g.counts[c] : 0;
+            break;
+          case 'min':
+            rowItem[c] = g.mins[c] === Infinity ? null : g.mins[c];
+            break;
+          case 'max':
+            rowItem[c] = g.maxs[c] === -Infinity ? null : g.maxs[c];
+            break;
+        }
+      });
+
       if (g.originFiles.size > 0) {
         rowItem["Origin_File_Name"] = Array.from(g.originFiles).join(", ");
       }
+      rowItem["_Grouped_Rows_Count"] = g.rowsCount;
       return rowItem;
     });
   }

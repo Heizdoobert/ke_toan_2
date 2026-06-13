@@ -233,7 +233,8 @@ class Model {
       keysA: [""],
       keysB: [""],
       comparePairs: [{ colA: "", colB: "" }],
-      groupByEnabled: false
+      groupByEnabled: false,
+      groupByFunction: 'sum'
     };
     this.results = [];
     this.elapsedTimeMs = 0;

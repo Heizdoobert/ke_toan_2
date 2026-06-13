@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, Sliders, AlertTriangle, HelpCircle } from "lucide-react";
-import { ComparisonPair, ReconciliationSchema } from "../types";
+import { ComparisonPair, ReconciliationSchema, AggregationFunction } from "../types";
 import { validateMatchingKeys } from "../utils/validator";
 
 interface SetupPanelProps {
@@ -112,6 +112,13 @@ export default function SetupPanel({
     onChangeSchema({
       ...schema,
       groupByEnabled: !schema.groupByEnabled
+    });
+  };
+
+  const handleGroupByFunctionChange = (fn: AggregationFunction) => {
+    onChangeSchema({
+      ...schema,
+      groupByFunction: fn
     });
   };
 
@@ -272,31 +279,53 @@ export default function SetupPanel({
       </div>
 
       {/* Group By Toggle Switch */}
-      <div className="bg-slate-50 p-3 rounded-lg border border-slate-150 flex items-center justify-between mt-2 font-sans">
-        <div className="flex flex-col">
-          <span className="text-xs font-semibold text-slate-700">Tính toán & Gộp theo bản ghi trùng</span>
-          <p className="text-[10px] text-slate-400">
-            Gộp các bản ghi trùng và tính tổng (`SUM`) trên các cột số đã chọn.
-          </p>
-        </div>
-        
-        <button
-          onClick={handleToggleGroupBy}
-          type="button"
-          className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-            schema.groupByEnabled ? "bg-indigo-600" : "bg-slate-300"
-          }`}
-          role="switch"
-          id="groupby-toggle"
-          aria-checked={schema.groupByEnabled}
-        >
-          <span
-            aria-hidden="true"
-            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-              schema.groupByEnabled ? "translate-x-5" : "translate-x-0"
+      <div className="bg-slate-50 p-3 rounded-lg border border-slate-150 flex flex-col gap-3 mt-2 font-sans">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-700">Tính toán & Gộp theo bản ghi trùng</span>
+            <p className="text-[10px] text-slate-400">
+              Gộp các bản ghi trùng và tính toán ({schema.groupByEnabled
+                ? { sum: 'Tổng (SUM)', count: 'Đếm (COUNT)', average: 'Trung bình (AVERAGE)', min: 'Tối thiểu (MIN)', max: 'Tối đa (MAX)' }[schema.groupByFunction]
+                : 'SUM'
+              }) trên các cột số đã chọn.
+            </p>
+          </div>
+          
+          <button
+            onClick={handleToggleGroupBy}
+            type="button"
+            className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              schema.groupByEnabled ? "bg-indigo-600" : "bg-slate-300"
             }`}
-          />
-        </button>
+            role="switch"
+            id="groupby-toggle"
+            aria-checked={schema.groupByEnabled}
+          >
+            <span
+              aria-hidden="true"
+              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                schema.groupByEnabled ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
+
+        {schema.groupByEnabled && (
+          <div className="flex items-center gap-2">
+            <label className="text-[10px] font-medium text-slate-500">Hàm gộp:</label>
+            <select
+              value={schema.groupByFunction}
+              onChange={(e) => handleGroupByFunctionChange(e.target.value as AggregationFunction)}
+              className="flex-1 px-2 py-1.5 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs focus:border-indigo-500"
+            >
+              <option value="sum">SUM — Tổng</option>
+              <option value="count">COUNT — Đếm</option>
+              <option value="average">AVERAGE — Trung bình</option>
+              <option value="min">MIN — Tối thiểu</option>
+              <option value="max">MAX — Tối đa</option>
+            </select>
+          </div>
+        )}
       </div>
 
       {/* Trigger Button */}

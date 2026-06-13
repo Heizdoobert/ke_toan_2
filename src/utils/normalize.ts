@@ -55,13 +55,19 @@ export function normalizeValue(val: any): string {
   } else if (slashesDateRegex.test(str)) {
     const match = str.match(slashesDateRegex);
     if (match) {
-      // Could be DD/MM/YYYY or MM/DD/YYYY. Let's try standard JS parser
-      const parsed = new Date(str);
-      if (!isNaN(parsed.getTime())) {
-        const y = parsed.getFullYear();
-        const m = String(parsed.getMonth() + 1).padStart(2, "0");
-        const d = String(parsed.getDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
+      // Vietnamese locale: DD/MM/YYYY primary, MM/DD/YYYY fallback
+      const part1 = parseInt(match[1], 10);
+      const part2 = parseInt(match[2], 10);
+      const year = match[3];
+
+      // Try DD/MM/YYYY first (Vietnam)
+      if (part2 >= 1 && part2 <= 12 && part1 >= 1 && part1 <= 31) {
+        return `${year}-${String(part2).padStart(2, "0")}-${String(part1).padStart(2, "0")}`;
+      }
+
+      // Fallback: MM/DD/YYYY
+      if (part1 >= 1 && part1 <= 12 && part2 >= 1 && part2 <= 31) {
+        return `${year}-${String(part1).padStart(2, "0")}-${String(part2).padStart(2, "0")}`;
       }
     }
   }
