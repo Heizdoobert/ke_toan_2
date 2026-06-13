@@ -4,7 +4,8 @@
   "description": "Ultra fast corporate financial data reconciliation engine with composite keys mapping and full outer join alignment.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest tests/"
   },
   "dependencies": {
     "express": "^4.21.2"
