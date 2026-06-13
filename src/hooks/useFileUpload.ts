@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, ChangeEvent } from 'react';
 import { useReconciliationContext } from '../context/ReconciliationContext';
 import { extractCleanTransactionalData } from '../utils/parser';
 
@@ -17,7 +17,7 @@ export function useFileUpload(side: 'A' | 'B') {
 
   /** Process uploaded files (.xlsx, .xls, .csv) */
   const handleFileUpload = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
       if (!files || files.length === 0) return;
 
@@ -25,8 +25,9 @@ export function useFileUpload(side: 'A' | 'B') {
       setProgress(15);
       const start = performance.now();
 
-      const validFiles = Array.from(files).filter((file: any) => {
-        const ext = (file.name as string).split('.').pop()?.toLowerCase();
+      const fileArray: File[] = Array.from(files);
+      const validFiles = fileArray.filter((file) => {
+        const ext = file.name.split('.').pop()?.toLowerCase();
         return ext === 'xlsx' || ext === 'xls' || ext === 'csv';
       });
 
@@ -51,15 +52,15 @@ export function useFileUpload(side: 'A' | 'B') {
         }
 
         const parsedResults = await Promise.all(
-          validFiles.map(async (file: any) => {
+          validFiles.map(async (file: File) => {
             return new Promise<{
               headers: string[];
               rows: Record<string, any>[];
               name: string;
             }>((resolve) => {
               const reader = new FileReader();
-              const extName = (file.name as string)
-                .substring((file.name as string).lastIndexOf('.'))
+              const extName = file.name
+                .substring(file.name.lastIndexOf('.'))
                 .toLowerCase();
 
               if (extName === '.csv') {

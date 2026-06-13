@@ -23,6 +23,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { useReconciliationContext } from "./context/ReconciliationContext";
 import { useReconciliation } from "./hooks/useReconciliation";
+import { useFileUpload } from "./hooks/useFileUpload";
 import DataGrid from "./components/DataGrid";
 import SetupPanel from "./components/SetupPanel";
 import ExportLocalhost from "./components/ExportLocalhost";
@@ -37,6 +38,8 @@ export default function App() {
     updateSchema
   } = useReconciliationContext();
   const { runReconciliation, exportToExcel } = useReconciliation();
+  const { handleFileUpload: handleFileUploadA, handlePasteImport: handlePasteImportA } = useFileUpload('A');
+  const { handleFileUpload: handleFileUploadB, handlePasteImport: handlePasteImportB } = useFileUpload('B');
 
   const matchedCount = state.reconciledResults.filter(r => r.status === "Matched").length;
   const unmatchedCount = state.reconciledResults.filter(r => r.status === "Unmatched").length;
@@ -135,9 +138,7 @@ export default function App() {
                       type="file"
                       multiple
                       {...({ webkitdirectory: "", directory: "" } as any)}
-                      onChange={(e) => {
-                        /* handleFileUpload wired via useFileUpload in DataGrid/SetupPanel integration */
-                      }}
+                      onChange={handleFileUploadA}
                       className="absolute inset-0 opacity-0 cursor-pointer"
                       id="source-A-uploader"
                     />
@@ -153,9 +154,7 @@ export default function App() {
                     id="source-A-paste-textarea"
                   />
                   <button
-                    onClick={() => {
-                      /* handlePasteImport wired via useFileUpload */
-                    }}
+                    onClick={handlePasteImportA}
                     className="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded shadow-xs transition"
                     id="source-A-paste-btn"
                   >
@@ -197,9 +196,7 @@ export default function App() {
                       type="file"
                       multiple
                       {...({ webkitdirectory: "", directory: "" } as any)}
-                      onChange={(e) => {
-                        /* handleFileUpload wired via useFileUpload */
-                      }}
+                      onChange={handleFileUploadB}
                       className="absolute inset-0 opacity-0 cursor-pointer"
                       id="source-B-uploader"
                     />
@@ -215,9 +212,7 @@ export default function App() {
                     id="source-B-paste-textarea"
                   />
                   <button
-                    onClick={() => {
-                      /* handlePasteImport wired via useFileUpload */
-                    }}
+                    onClick={handlePasteImportB}
                     className="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded shadow-xs transition"
                     id="source-B-paste-btn"
                   >
