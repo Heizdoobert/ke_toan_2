@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useReconciliationContext } from '../context/ReconciliationContext';
-import { extractCleanTransactionalData } from '../utils/reconciler';
+import { extractCleanTransactionalData } from '../utils/parser';
 
 export function useFileUpload(side: 'A' | 'B') {
   const {

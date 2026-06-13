@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, Sliders, AlertTriangle, HelpCircle } from "lucide-react";
 import { ComparisonPair, ReconciliationSchema } from "../types";
-import { validateMatchingKeys } from "../utils/reconciler";
+import { validateMatchingKeys } from "../utils/validator";
 
 interface SetupPanelProps {
   headersA: string[];
