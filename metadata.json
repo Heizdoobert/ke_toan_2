@@ -1,0 +1,8 @@
+{
+  "name": "Universal Accounting Data Reconciler",
+  "description": "Ultra fast corporate financial data reconciliation engine with composite keys mapping and full outer join aligning.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
