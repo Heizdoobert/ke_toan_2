@@ -144,7 +144,7 @@ export default function DataGrid({
           <div>
             <h3 className="font-semibold text-sm tracking-tight">{title}</h3>
             <p className="text-[11px] text-slate-400 font-mono truncate max-w-[200px] sm:max-w-[350px]">
-              {fileName ? `${fileName} (${rows.length} rows)` : "No data uploaded"}
+              {fileName ? `${fileName} (${rows.length} dòng)` : "Chưa tải dữ liệu"}
             </p>
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function DataGrid({
             className="text-[11px] bg-slate-800 text-slate-300 hover:text-white px-2 py-1 rounded border border-slate-700 transition"
             id={`clear-${sourceLabel}`}
           >
-            Reset
+            Đặt lại
           </button>
         )}
       </div>
@@ -163,7 +163,7 @@ export default function DataGrid({
       {headers.length === 0 ? (
         <div className="p-8 text-center text-slate-400 flex flex-col items-center justify-center flex-1 h-64 font-sans">
           <FileSpreadsheet className="h-10 w-10 text-slate-300 mb-2 stroke-1" />
-          <p className="text-sm">Upload Excel, CSV, paste data, or drop folders to begin</p>
+          <p className="text-sm">Tải lên Excel, CSV, dán dữ liệu hoặc thả thư mục</p>
         </div>
       ) : (
         <div className="flex flex-col flex-grow min-h-0">
@@ -176,7 +176,7 @@ export default function DataGrid({
                 className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded border border-slate-200 shadow-xs font-medium cursor-pointer"
                 id={`addrow-${sourceLabel}`}
               >
-                <Plus className="h-3.5 w-3.5 text-slate-500" /> Add Row
+                <Plus className="h-3.5 w-3.5 text-slate-500" /> Thêm dòng
               </button>
               
               <button
@@ -190,7 +190,7 @@ export default function DataGrid({
                 }`}
                 id={`delrow-${sourceLabel}`}
               >
-                <Trash2 className="h-3.5 w-3.5" /> Delete Row ({selectedRows.size})
+                <Trash2 className="h-3.5 w-3.5" /> Xoá dòng ({selectedRows.size})
               </button>
             </div>
 
@@ -201,7 +201,7 @@ export default function DataGrid({
                 className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 rounded border border-slate-200 shadow-xs font-medium cursor-pointer"
                 id={`addcol-${sourceLabel}`}
               >
-                <Plus className="h-3.5 w-3.5 text-slate-500" /> Add Column
+                <Plus className="h-3.5 w-3.5 text-slate-500" /> Thêm cột
               </button>
               
               <button
@@ -215,7 +215,7 @@ export default function DataGrid({
                 }`}
                 id={`delcol-${sourceLabel}`}
               >
-                <Trash2 className="h-3.5 w-3.5" /> Delete Col ({selectedCols.size})
+                <Trash2 className="h-3.5 w-3.5" /> Xoá cột ({selectedCols.size})
               </button>
             </div>
           </div>
@@ -326,7 +326,7 @@ export default function DataGrid({
         <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 animate-fade-in">
           <div className="bg-white rounded-lg border border-slate-300 shadow-xl max-w-sm w-full p-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h4 className="font-semibold text-sm text-slate-800">Add New Column</h4>
+              <h4 className="font-semibold text-sm text-slate-800">Thêm cột mới</h4>
               <button
                 onClick={() => setShowAddColModal(false)}
                 className="text-slate-400 hover:text-slate-600 transition"
@@ -337,11 +337,11 @@ export default function DataGrid({
             
             <div className="my-4">
               <label className="block text-xs font-medium text-slate-500 mb-1">
-                Column Name
+                  Tên cột
               </label>
               <input
                 type="text"
-                placeholder="E.g., Transaction_ID, Amount_USD"
+                placeholder="VD: Transaction_ID, Amount_USD"
                 value={newColName}
                 onChange={(e) => setNewColName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddColumn()}
@@ -354,13 +354,13 @@ export default function DataGrid({
                 onClick={() => setShowAddColModal(false)}
                 className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 font-medium"
               >
-                Cancel
+                Huỷ
               </button>
               <button
                 onClick={handleAddColumn}
                 className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-medium"
               >
-                Confirm
+                Xác nhận
               </button>
             </div>
           </div>

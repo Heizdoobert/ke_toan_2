@@ -107,7 +107,7 @@ app.listen(PORT, '0.0.0.0', () => {
         </div>
         <div class="flex flex-col gap-2">
           <label class="block text-xs font-semibold text-slate-600">Upload Files, CSV, or folder</label>
-          <input type="file" id="upload-input-A" class="block w-full border border-slate-205 py-2 px-3 text-xs bg-slate-50 text-slate-700 rounded cursor-pointer" multiple webkitdirectory directory />
+          <input type="file" id="upload-input-A" class="block w-full border border-slate-205 py-2 px-3 text-xs bg-slate-50 text-slate-700 rounded cursor-pointer" multiple />
           <p class="text-[10px] text-slate-400">Or copy-paste transactional table into the textarea below</p>
           <textarea id="paste-input-A" placeholder="Transaction_ID,Amount,Date&#15;000101,150.25,2026-06-11&#15;000102,299.90,2026-06-12" class="w-full h-24 p-2 font-mono text-xs border border-slate-300 rounded outline-none shadow-xs resize-none"></textarea>
         </div>
@@ -121,7 +121,7 @@ app.listen(PORT, '0.0.0.0', () => {
         </div>
         <div class="flex flex-col gap-2">
           <label class="block text-xs font-semibold text-slate-600">Upload Files, CSV, or folder</label>
-          <input type="file" id="upload-input-B" class="block w-full border border-slate-205 py-2 px-3 text-xs bg-slate-50 text-slate-700 rounded cursor-pointer" multiple webkitdirectory directory />
+          <input type="file" id="upload-input-B" class="block w-full border border-slate-205 py-2 px-3 text-xs bg-slate-50 text-slate-700 rounded cursor-pointer" multiple />
           <p class="text-[10px] text-slate-400">Or copy-paste transactional table into the textarea below</p>
           <textarea id="paste-input-B" placeholder="Txn_No,Total_Val,Txn_Date&#15;101,150.25,2026-06-11&#15;102,295.00,2026-06-12" class="w-full h-24 p-2 font-mono text-xs border border-slate-300 rounded outline-none shadow-xs resize-none"></textarea>
         </div>
@@ -571,9 +571,9 @@ class View {
       <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
         <FolderGit className="h-6 w-6 text-indigo-400" />
         <div>
-          <h3 className="font-bold text-base text-white tracking-tight">Localhost Deployment Assets</h3>
+          <h3 className="font-bold text-base text-white tracking-tight">Tài nguyên triển khai Localhost</h3>
           <p className="text-xs text-slate-400">
-            Export or replicate this MVC source pack to operate under a native Node.js/Express console.
+            Xuất hoặc tái tạo gói MVC này để chạy trên Node.js/Express.
           </p>
         </div>
       </div>
@@ -617,7 +617,7 @@ class View {
         <button
           onClick={() => copyToClipboard(codes[activeTab])}
           className="absolute top-2 right-2 bg-slate-800 hover:bg-slate-700 text-white p-1.5 rounded border border-slate-700 transition flex items-center gap-1 cursor-pointer"
-          title="Copy Code"
+          title="Sao chép mã"
         >
           {copied ? (
             <Check className="h-3.5 w-3.5 text-emerald-400" />
@@ -631,11 +631,11 @@ class View {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs bg-slate-950 p-3 rounded border border-slate-800 gap-2 font-mono">
         <div className="flex items-center gap-1.5 text-slate-400">
           <Terminal className="h-4 w-4 text-emerald-400" />
-          <span>To boot:</span>
+          <span>Để chạy:</span>
           <span className="text-white bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded">npm install && npm start</span>
         </div>
         <div className="text-slate-500 text-[10px]">
-          Runs on server 0.0.0.0:3000
+          Chạy trên server 0.0.0.0:3000
         </div>
       </div>
     </div>

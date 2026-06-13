@@ -121,7 +121,7 @@ export default function SetupPanel({
     <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 font-sans flex flex-col gap-4">
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
         <Sliders className="h-5 w-5 text-indigo-700" />
-        <h3 className="font-semibold text-sm text-slate-800 tracking-tight">Reconciliation Setup Rules</h3>
+        <h3 className="font-semibold text-sm text-slate-800 tracking-tight">Thiết lập quy tắc đối soát</h3>
       </div>
 
       {/* Warnings Panel */}
@@ -129,7 +129,7 @@ export default function SetupPanel({
         <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-xs text-amber-850 flex flex-col gap-1.5 animate-fade-in animate-duration-300">
           <div className="flex items-center gap-1.5 font-semibold text-amber-900">
             <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
-            <span>Type Compatibility Warnings</span>
+            <span>Phát hiện không tương thích kiểu dữ liệu</span>
           </div>
           <ul className="list-disc pl-4 space-y-1 text-[11px]">
             {warnings.map((warn, i) => (
@@ -143,7 +143,7 @@ export default function SetupPanel({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <label className="text-xs font-semibold text-slate-700">
-            Row Matching Keys (Composite Key) <span className="text-slate-400 font-normal">(1 - 4 Pairs)</span>
+            Khoá khớp dòng (Composite Key) <span className="text-slate-400 font-normal">(1 - 4 cặp)</span>
           </label>
           {schema.keysA.length < 4 && (
             <button
@@ -151,7 +151,7 @@ export default function SetupPanel({
               type="button"
               className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-0.5"
             >
-              <Plus className="h-3 w-3" /> Add Row Key Pair
+              <Plus className="h-3 w-3" /> Thêm cặp khoá
             </button>
           )}
         </div>
@@ -161,14 +161,14 @@ export default function SetupPanel({
             <div key={index} className="flex items-center gap-2 bg-slate-50 p-2 rounded border border-slate-100 transition-all">
               <div className="grid grid-cols-2 gap-2 flex-grow">
                 {/* Source A Keys */}
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">Source A Column</label>
-                  <select
-                    value={schema.keysA[index] || ""}
-                    onChange={(e) => handleKeyChange(index, "A", e.target.value)}
-                    className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs focus:border-indigo-500"
-                  >
-                    <option value="">-- Choose Key Column --</option>
+                  <div>
+                    <label className="block text-[10px] text-slate-400 mb-0.5">Cột A</label>
+                    <select
+                      value={schema.keysA[index] || ""}
+                      onChange={(e) => handleKeyChange(index, "A", e.target.value)}
+                      className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs focus:border-indigo-500"
+                    >
+                      <option value="">-- Chọn cột khoá --</option>
                     {headersA.map(h => (
                       <option key={h} value={h}>{h}</option>
                     ))}
@@ -176,14 +176,14 @@ export default function SetupPanel({
                 </div>
                 
                 {/* Source B Keys */}
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">Source B Column</label>
-                  <select
-                    value={schema.keysB[index] || ""}
-                    onChange={(e) => handleKeyChange(index, "B", e.target.value)}
-                    className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs focus:border-indigo-500"
-                  >
-                    <option value="">-- Choose Key Column --</option>
+                  <div>
+                    <label className="block text-[10px] text-slate-400 mb-0.5">Cột B</label>
+                    <select
+                      value={schema.keysB[index] || ""}
+                      onChange={(e) => handleKeyChange(index, "B", e.target.value)}
+                      className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs focus:border-indigo-500"
+                    >
+                      <option value="">-- Chọn cột khoá --</option>
                     {headersB.map(h => (
                       <option key={h} value={h}>{h}</option>
                     ))}
@@ -196,7 +196,7 @@ export default function SetupPanel({
                   type="button"
                   onClick={() => handleRemoveKeyRow(index)}
                   className="p-1 text-slate-400 hover:text-rose-600 rounded mt-4 transition cursor-pointer"
-                  title="Remove Pair"
+                  title="Xoá cặp"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -210,14 +210,14 @@ export default function SetupPanel({
       <div className="flex flex-col gap-2 mt-2">
         <div className="flex items-center justify-between">
           <label className="text-xs font-semibold text-slate-700">
-            Comparison Target Columns (Values/Amounts)
+            Cột so sánh (Giá trị / Số tiền)
           </label>
           <button
             onClick={handleAddCompareRow}
             type="button"
             className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-0.5"
           >
-            <Plus className="h-3 w-3" /> Add Value Pair
+            <Plus className="h-3 w-3" /> Thêm cặp giá trị
           </button>
         </div>
 
@@ -226,14 +226,14 @@ export default function SetupPanel({
             <div key={index} className="flex items-center gap-2 bg-slate-50 p-2 rounded border border-slate-100">
               <div className="grid grid-cols-2 gap-2 flex-grow">
                 {/* Comparison value A */}
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">Compare Source A Column</label>
-                  <select
-                    value={pair.colA || ""}
-                    onChange={(e) => handleCompareChange(index, "A", e.target.value)}
-                    className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs"
-                  >
-                    <option value="">-- Choose Target --</option>
+                  <div>
+                    <label className="block text-[10px] text-slate-400 mb-0.5">Cột A so sánh</label>
+                    <select
+                      value={pair.colA || ""}
+                      onChange={(e) => handleCompareChange(index, "A", e.target.value)}
+                      className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs"
+                    >
+                      <option value="">-- Chọn mục tiêu --</option>
                     {headersA.map(h => (
                       <option key={h} value={h}>{h}</option>
                     ))}
@@ -241,14 +241,14 @@ export default function SetupPanel({
                 </div>
                 
                 {/* Comparison value B */}
-                <div>
-                  <label className="block text-[10px] text-slate-400 mb-0.5">With Source B Column</label>
-                  <select
-                    value={pair.colB || ""}
-                    onChange={(e) => handleCompareChange(index, "B", e.target.value)}
-                    className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs"
-                  >
-                    <option value="">-- Choose Target --</option>
+                  <div>
+                    <label className="block text-[10px] text-slate-400 mb-0.5">Với cột B</label>
+                    <select
+                      value={pair.colB || ""}
+                      onChange={(e) => handleCompareChange(index, "B", e.target.value)}
+                      className="w-full px-2 py-1 text-xs border border-slate-300 bg-white rounded outline-none shadow-xs"
+                    >
+                      <option value="">-- Chọn mục tiêu --</option>
                     {headersB.map(h => (
                       <option key={h} value={h}>{h}</option>
                     ))}
@@ -261,7 +261,7 @@ export default function SetupPanel({
                   type="button"
                   onClick={() => handleRemoveCompareRow(index)}
                   className="p-1 text-slate-400 hover:text-rose-600 rounded mt-4 transition cursor-pointer"
-                  title="Remove Target Pair"
+                  title="Xoá cặp so sánh"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -274,9 +274,9 @@ export default function SetupPanel({
       {/* Group By Toggle Switch */}
       <div className="bg-slate-50 p-3 rounded-lg border border-slate-150 flex items-center justify-between mt-2 font-sans">
         <div className="flex flex-col">
-          <span className="text-xs font-semibold text-slate-700">Calculate & Group By Duplicates</span>
+          <span className="text-xs font-semibold text-slate-700">Tính toán & Gộp theo bản ghi trùng</span>
           <p className="text-[10px] text-slate-400">
-            Aggregate recurring unique entries and calculate sum (`SUM`) on selected target numeric columns vertically.
+            Gộp các bản ghi trùng và tính tổng (`SUM`) trên các cột số đã chọn.
           </p>
         </div>
         
@@ -310,7 +310,7 @@ export default function SetupPanel({
         }`}
         id="run-reconcile-btn"
       >
-        Run Fast Reconciliation (under 2s)
+        Chạy đối soát (dưới 2 giây)
       </button>
     </div>
   );

@@ -68,12 +68,12 @@ describe('App file upload wiring', () => {
     );
 
     // Switch to paste tab in Source A
-    const pasteButtons = screen.getAllByText('Ctrl+V Paste');
+    const pasteButtons = screen.getAllByText('Dán Ctrl+V');
     fireEvent.click(pasteButtons[0]);
 
     // Click parse button inside Source A card
     const sourceA = container.querySelector('#import-block-A') as HTMLElement;
-    const parseBtn = within(sourceA).getByText('Parse Paste Text');
+    const parseBtn = within(sourceA).getByText('Phân tích văn bản đã dán');
     fireEvent.click(parseBtn);
 
     expect(mockHandlePasteImport).toHaveBeenCalledTimes(1);
@@ -87,12 +87,12 @@ describe('App file upload wiring', () => {
     );
 
     // Switch to paste tab in Source B
-    const pasteButtons = screen.getAllByText('Ctrl+V Paste');
+    const pasteButtons = screen.getAllByText('Dán Ctrl+V');
     fireEvent.click(pasteButtons[1]);
 
     // Click parse button inside Source B card
     const sourceB = container.querySelector('#import-block-B') as HTMLElement;
-    const parseBtn = within(sourceB).getByText('Parse Paste Text');
+    const parseBtn = within(sourceB).getByText('Phân tích văn bản đã dán');
     fireEvent.click(parseBtn);
 
     expect(mockHandlePasteImport).toHaveBeenCalledTimes(1);

@@ -51,6 +51,7 @@ const initialState: ReconciliationState = {
     keysB: [''],
     comparePairs: [{ colA: '', colB: '' }],
     groupByEnabled: false,
+    groupByFunction: 'sum',
   },
   reconciledResults: [],
   progress: 0,

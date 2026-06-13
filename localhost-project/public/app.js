@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
       XLSX.writeFile(wb, `Reconciliation_Report_${currDate}.xlsx`);
     } catch (e) {
       console.error(e);
-      alert("Error building spreadsheet output file.");
+      alert("Lỗi tạo tệp Excel.");
     }
   });
 
@@ -189,13 +189,13 @@ document.addEventListener("DOMContentLoaded", () => {
     view.resultsCard.classList.add("hidden");
 
     view.rulesFieldsWrapper.innerHTML = `
-      <p class="text-xs text-slate-400 text-center py-4">Please upload ledger documents to Source A and Source B to unlock calculations configuration mapping.</p>
+      <p class="text-xs text-slate-400 text-center py-4">Vui lòng tải dữ liệu vào Sổ Cái A và Sổ Cái B để mở bảng cấu hình.</p>
     `;
 
     const selector = document.getElementById("validation-alerts-container");
     if (selector) selector.remove();
 
-    alert("Reconciliation Configuration Rules Cache state cleared successfully.");
+    alert("Đã xoá bộ nhớ đệm cấu hình thành công.");
   });
 
 });

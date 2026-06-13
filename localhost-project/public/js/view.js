@@ -63,7 +63,7 @@ class View {
   }
 
   renderElapsedTime(ms) {
-    this.elapsedTicker.textContent = `${ms} ms / client RAM calculations`;
+    this.elapsedTicker.textContent = `${ms} ms / tính toán RAM`;
   }
 
   renderWarnings(warnings) {
@@ -78,7 +78,7 @@ class View {
     alertDiv.innerHTML = `
       <div class="flex items-center gap-1.5 font-bold text-amber-900">
         <i data-lucide="alert-triangle" class="h-4 w-4 text-amber-600"></i>
-        <span>Data Formats Warnings</span>
+        <span>Mẫu dữ liệu cảnh báo</span>
       </div>
       <ul class="list-disc pl-4 space-y-1 text-[11px]">
         ${warnings.map(w => `<li>${w.msg}</li>`).join("")}
@@ -96,7 +96,7 @@ class View {
       container.innerHTML = `
         <div class="p-8 text-center text-slate-400 flex flex-col items-center justify-center flex-grow h-full">
           <i data-lucide="file-spreadsheet" class="h-10 w-10 text-slate-300 stroke-1 mb-2"></i>
-          <span class="text-xs">Dynamic grid ${side} values preview is empty</span>
+          <span class="text-xs">Lưới dữ liệu ${side} chưa có dữ liệu</span>
         </div>
       `;
       lucide.createIcons();
@@ -108,18 +108,18 @@ class View {
     actionToolbar.innerHTML = `
       <div class="flex items-center gap-2">
         <button id="addrow-btn-${side}" class="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 border border-slate-205 rounded cursor-pointer font-semibold shadow-3xs hover:text-slate-900 transition text-[11px]">
-          <i data-lucide="plus" class="h-3 w-3"></i> Add Row
+          <i data-lucide="plus" class="h-3 w-3"></i> Thêm dòng
         </button>
         <button id="delrow-btn-${side}" class="flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 px-2 py-1 border border-rose-200 rounded cursor-pointer font-semibold shadow-3xs transition text-[11px]">
-          <i data-lucide="trash-2" class="h-3 w-3"></i> Delete Row
+          <i data-lucide="trash-2" class="h-3 w-3"></i> Xoá dòng
         </button>
       </div>
       <div class="flex items-center gap-2">
         <button id="addcol-btn-${side}" class="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 px-2 py-1 border border-slate-205 rounded cursor-pointer font-semibold shadow-3xs hover:text-slate-900 transition text-[11px]">
-          <i data-lucide="plus" class="h-3 w-3"></i> Add Col
+          <i data-lucide="plus" class="h-3 w-3"></i> Thêm cột
         </button>
         <button id="delcol-btn-${side}" class="flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 px-2 py-1 border border-rose-200 rounded cursor-pointer font-semibold shadow-3xs transition text-[11px]">
-          <i data-lucide="trash-2" class="h-3 w-3"></i> Delete Col
+          <i data-lucide="trash-2" class="h-3 w-3"></i> Xoá cột
         </button>
       </div>
     `;
@@ -199,7 +199,7 @@ class View {
     });
 
     document.getElementById(`addcol-btn-${side}`).addEventListener("click", () => {
-      const colName = prompt("Insert new column name:");
+      const colName = prompt("Nhập tên cột mới:");
       if (!colName) return;
       const clean = colName.trim();
       if (!clean || headers.includes(clean)) return;
@@ -265,7 +265,7 @@ class View {
 
     let keysMappingHTML = `
       <div class="flex flex-col gap-2">
-        <label class="font-semibold text-slate-700">Row Matching Keys (Composite Multi Key pairing - Max 4)</label>
+        <label class="font-semibold text-slate-700">Khoá ghép đối soát (tối đa 4)</label>
         <div id="criteria-rows-rack" class="flex flex-col gap-2">
     `;
 
@@ -274,16 +274,16 @@ class View {
         <div class="flex items-center gap-2 bg-slate-55 p-2 rounded border border-slate-150">
           <div class="grid grid-cols-2 gap-2 flex-grow">
             <div>
-              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Source A Column</span>
+              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Cột A</span>
               <select data-idx="${idx}" data-side="A" class="rules-key-select w-full p-1 border border-slate-300 bg-white rounded outline-none text-xs">
-                <option value="">-- Select Column --</option>
+                <option value="">-- Chọn cột --</option>
                 ${headersA.map(h => `<option value="${h}" ${schema.keysA[idx] === h ? "selected" : ""}>${h}</option>`).join("")}
               </select>
             </div>
             <div>
-              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Source B Column</span>
+              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Cột B</span>
               <select data-idx="${idx}" data-side="B" class="rules-key-select w-full p-1 border border-slate-300 bg-white rounded outline-none text-xs">
-                <option value="">-- Select Column --</option>
+                <option value="">-- Chọn cột --</option>
                 ${headersB.map(h => `<option value="${h}" ${schema.keysB[idx] === h ? "selected" : ""}>${h}</option>`).join("")}
               </select>
             </div>
@@ -301,7 +301,7 @@ class View {
         </div>
         ${schema.keysA.length < 4 ? `
           <button id="add-key-pair-btn" class="text-indigo-650 hover:text-indigo-850 font-semibold flex items-center gap-1 self-start text-[11px] cursor-pointer">
-            <i data-lucide="plus" class="h-3.5 w-3.5"></i> Add Extra Row Match Key Pair
+            <i data-lucide="plus" class="h-3.5 w-3.5"></i> Thêm cặp khoá
           </button>
         ` : ""}
       </div>
@@ -309,7 +309,7 @@ class View {
 
     let comparisonsHTML = `
       <div class="flex flex-col gap-2 mt-2">
-        <label class="font-semibold text-slate-700">Side-by-Side Target Value Column Comparisons</label>
+        <label class="font-semibold text-slate-700">So sánh giá trị mục tiêu</label>
         <div id="compare-rows-rack" class="flex flex-col gap-2">
     `;
 
@@ -318,16 +318,16 @@ class View {
         <div class="flex items-center gap-2 bg-slate-55 p-2 rounded border border-slate-150">
           <div class="grid grid-cols-2 gap-2 flex-grow">
             <div>
-              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Source A Value Target</span>
+              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Giá trị A</span>
               <select data-idx="${idx}" data-side="A" class="compare-col-select w-full p-1 border border-slate-300 bg-white rounded outline-none text-xs">
-                <option value="">-- Select Column --</option>
+                <option value="">-- Chọn cột --</option>
                 ${headersA.map(h => `<option value="${h}" ${pair.colA === h ? "selected" : ""}>${h}</option>`).join("")}
               </select>
             </div>
             <div>
-              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Source B Value Target</span>
+              <span class="block text-[9px] text-slate-400 mb-0.5 font-semibold">Giá trị B</span>
               <select data-idx="${idx}" data-side="B" class="compare-col-select w-full p-1 border border-slate-300 bg-white rounded outline-none text-xs">
-                <option value="">-- Select Column --</option>
+                <option value="">-- Chọn cột --</option>
                 ${headersB.map(h => `<option value="${h}" ${pair.colB === h ? "selected" : ""}>${h}</option>`).join("")}
               </select>
             </div>
@@ -344,7 +344,7 @@ class View {
     comparisonsHTML += `
         </div>
         <button id="add-compare-pair-btn" class="text-indigo-650 hover:text-indigo-850 font-semibold flex items-center gap-1 self-start text-[11px] cursor-pointer">
-          <i data-lucide="plus" class="h-3.5 w-3.5"></i> Add Value Target Column Pair
+          <i data-lucide="plus" class="h-3.5 w-3.5"></i> Thêm cặp giá trị
         </button>
       </div>
     `;
@@ -352,8 +352,8 @@ class View {
     const groupByHTML = `
       <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-center justify-between text-xs mt-2">
         <div>
-          <span class="font-bold text-slate-700">Calculate & Group By Duplicates</span>
-          <p class="text-[10px] text-slate-400 leading-tight">Aggregate recurring matched items and summarize sums dynamically.</p>
+          <span class="font-bold text-slate-700">Tính toán & gom nhóm</span>
+          <p class="text-[10px] text-slate-400 leading-tight">Tổng hợp các mục khớp và tính tổng động.</p>
         </div>
         <button id="group-by-toggle-btn" class="relative inline-flex h-5 w-10 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none bg-slate-300">
           <span id="group-by-bullet" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition duration-200 translate-x-0"></span>
@@ -363,7 +363,7 @@ class View {
 
     const buttonHTML = `
       <button id="execute-recon-btn" class="w-full mt-4 py-2.5 px-4 rounded-md text-xs font-semibold text-center tracking-wide text-white bg-indigo-700 hover:bg-indigo-800 transition active:scale-99 shadow-xs cursor-pointer">
-        Run Fast Reconciliation (under 2s)
+        Chạy đối soát nhanh (dưới 2s)
       </button>
     `;
 
@@ -441,14 +441,21 @@ class View {
   renderReconciliationReport(results, elapsedMs, schema) {
     this.resultsCard.classList.remove("hidden");
 
+    const statusDisplay = {
+      "Matched": "Khớp",
+      "Unmatched": "Lệch",
+      "Not Found in Source B": "Không có trong nguồn B",
+      "Not Found in Source A": "Không có trong nguồn A"
+    };
+
     const matched = results.filter(r => r.status === "Matched").length;
     const unmatched = results.filter(r => r.status === "Unmatched").length;
     this.resultsStatTicker.innerHTML = `
-      Matched: <span class="text-emerald-600 font-bold">${matched}</span> 
-      | Unmatched: <span class="text-rose-600 font-bold">${unmatched}</span>
+      Khớp: <span class="text-emerald-600 font-bold">${matched}</span> 
+      | Lệch: <span class="text-rose-600 font-bold">${unmatched}</span>
     `;
 
-    this.elapsedTicker.textContent = `${elapsedMs} ms / client RAM calculations`;
+    this.elapsedTicker.textContent = `${elapsedMs} ms / tính toán RAM`;
     this.resultsTable.innerHTML = "";
 
     let thead = `
@@ -456,22 +463,22 @@ class View {
         <tr>
     `;
     schema.keysA.forEach((_, i) => {
-      thead += `<th class="px-3 py-2 border-r border-slate-200">Key A (${schema.keysA[i] || `Pair ${i+1}`})</th>`;
+      thead += `<th class="px-3 py-2 border-r border-slate-200">Khoá A (${schema.keysA[i] || `Cặp ${i+1}`})</th>`;
     });
     schema.keysB.forEach((_, i) => {
-      thead += `<th class="px-3 py-2 border-r border-slate-200">Key B (${schema.keysB[i] || `Pair ${i+1}`})</th>`;
+      thead += `<th class="px-3 py-2 border-r border-slate-200">Khoá B (${schema.keysB[i] || `Cặp ${i+1}`})</th>`;
     });
 
     schema.comparePairs.forEach(pair => {
-      if (pair.colA) thead += `<th class="px-3 py-2 border-r border-slate-200 bg-slate-50">Source A Value (${pair.colA})</th>`;
-      if (pair.colB) thead += `<th class="px-3 py-2 border-r border-slate-200 bg-slate-50">Source B Value (${pair.colB})</th>`;
+      if (pair.colA) thead += `<th class="px-3 py-2 border-r border-slate-200 bg-slate-50">Giá trị A (${pair.colA})</th>`;
+      if (pair.colB) thead += `<th class="px-3 py-2 border-r border-slate-200 bg-slate-50">Giá trị B (${pair.colB})</th>`;
     });
 
     thead += `
-          <th class="px-3 py-2 border-r border-slate-200">A Origin File</th>
-          <th class="px-3 py-2 border-r border-slate-200">B Origin File</th>
-          <th class="px-3 py-2 border-r border-slate-200 text-slate-900 font-bold">Status</th>
-          <th class="px-3 py-2 text-slate-900 font-bold">Variance / Discrepancy Suggested</th>
+          <th class="px-3 py-2 border-r border-slate-200">Tệp nguồn A</th>
+          <th class="px-3 py-2 border-r border-slate-200">Tệp nguồn B</th>
+          <th class="px-3 py-2 border-r border-slate-200 text-slate-900 font-bold">Trạng thái</th>
+          <th class="px-3 py-2 text-slate-900 font-bold">Chênh lệch / Gợi ý</th>
         </tr>
       </thead>
     `;
@@ -501,9 +508,9 @@ class View {
         <td class="px-3 py-2 border-r border-slate-150 truncate max-w-[140px] text-slate-500 font-mono">${row.valuesA["Origin_File_Name"] || "—"}</td>
         <td class="px-3 py-2 border-r border-slate-150 truncate max-w-[140px] text-slate-500 font-mono">${row.valuesB["Origin_File_Name"] || "—"}</td>
         <td class="px-3 py-2 border-r border-slate-150 text-center">
-          <span class="px-2 py-0.5 border ${statusBg} text-[10px] font-bold rounded-full">${row.status}</span>
+          <span class="px-2 py-0.5 border ${statusBg} text-[10px] font-bold rounded-full">${statusDisplay[row.status] || row.status}</span>
         </td>
-        <td class="px-3 py-2 text-slate-600 font-semibold break-all whitespace-normal min-w-[200px]">${row.discrepancy || `<span class="text-emerald-600">Verification Match Success</span>`}</td>
+        <td class="px-3 py-2 text-slate-600 font-semibold break-all whitespace-normal min-w-[200px]">${row.discrepancy || `<span class="text-emerald-600">Khớp xác thực</span>`}</td>
       </tr>`;
     });
 

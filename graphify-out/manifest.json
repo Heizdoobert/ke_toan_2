@@ -1,0 +1,87 @@
+{
+  "D:\\ke_toan_2\\ke_toan_2\\metadata.json": {
+    "mtime": 1781334546.1377532,
+    "ast_hash": "ca449d24e58b172a40acf09c3094284b",
+    "semantic_hash": "ca449d24e58b172a40acf09c3094284b"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\package.json": {
+    "mtime": 1781334546.1377532,
+    "ast_hash": "c749c75ec4a6827bacdfebe3013f2dee",
+    "semantic_hash": "c749c75ec4a6827bacdfebe3013f2dee"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\tsconfig.json": {
+    "mtime": 1781334546.1408079,
+    "ast_hash": "aca6cdac13db39d03d9b95866834d84f",
+    "semantic_hash": "aca6cdac13db39d03d9b95866834d84f"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\vite.config.ts": {
+    "mtime": 1781334546.1408079,
+    "ast_hash": "cfc596836379397756c305b60b69ba06",
+    "semantic_hash": "cfc596836379397756c305b60b69ba06"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\localhost-project\\package.json": {
+    "mtime": 1781334546.1354544,
+    "ast_hash": "9d7c796505279f002d63a26c9ad157df",
+    "semantic_hash": "9d7c796505279f002d63a26c9ad157df"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\localhost-project\\server.js": {
+    "mtime": 1781334546.137245,
+    "ast_hash": "501cf5f7ea68935ab6a31d1c0c9696df",
+    "semantic_hash": "501cf5f7ea68935ab6a31d1c0c9696df"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\localhost-project\\public\\app.js": {
+    "mtime": 1781334546.1364634,
+    "ast_hash": "a59989954dc086904976c547c58d81c0",
+    "semantic_hash": "a59989954dc086904976c547c58d81c0"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\src\\App.tsx": {
+    "mtime": 1781334546.1377532,
+    "ast_hash": "c21913b6eb7321c943423236cde8a015",
+    "semantic_hash": "c21913b6eb7321c943423236cde8a015"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\src\\main.tsx": {
+    "mtime": 1781334546.1397986,
+    "ast_hash": "a0bcc3ffa5e95e1965f94969ab488283",
+    "semantic_hash": "a0bcc3ffa5e95e1965f94969ab488283"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\src\\types.ts": {
+    "mtime": 1781334546.1397986,
+    "ast_hash": "d5b1919dd38eb76462d84080ba83b6da",
+    "semantic_hash": "d5b1919dd38eb76462d84080ba83b6da"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\src\\components\\DataGrid.tsx": {
+    "mtime": 1781334546.13879,
+    "ast_hash": "45b6a27bfc16d0af2723d57be2d958ab",
+    "semantic_hash": "45b6a27bfc16d0af2723d57be2d958ab"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\src\\components\\ExportLocalhost.tsx": {
+    "mtime": 1781334546.13879,
+    "ast_hash": "bd5eb6a77ffab8916f7a97f5c8708f70",
+    "semantic_hash": "bd5eb6a77ffab8916f7a97f5c8708f70"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\src\\components\\SetupPanel.tsx": {
+    "mtime": 1781334546.13879,
+    "ast_hash": "f9d6b128cb13e821226e5cb8398e1e37",
+    "semantic_hash": "f9d6b128cb13e821226e5cb8398e1e37"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\src\\utils\\reconciler.ts": {
+    "mtime": 1781334546.1397986,
+    "ast_hash": "d1553f6b13b89b1a94bc8eb8afbdc175",
+    "semantic_hash": "d1553f6b13b89b1a94bc8eb8afbdc175"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\index.html": {
+    "mtime": 1781334546.1354544,
+    "ast_hash": "6f9825a5d608d9b40f76bc27a5116aee",
+    "semantic_hash": "6f9825a5d608d9b40f76bc27a5116aee"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\README.md": {
+    "mtime": 1781334546.1354544,
+    "ast_hash": "68c8e82a33a9de0e559a8b1be41ae168",
+    "semantic_hash": "68c8e82a33a9de0e559a8b1be41ae168"
+  },
+  "D:\\ke_toan_2\\ke_toan_2\\localhost-project\\public\\index.html": {
+    "mtime": 1781334546.137245,
+    "ast_hash": "64449f9f62940bdc221e395239e8b7ff",
+    "semantic_hash": "64449f9f62940bdc221e395239e8b7ff"
+  }
+}

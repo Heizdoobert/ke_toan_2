@@ -64,7 +64,7 @@ class Controller {
 
       if (typeA !== typeB) {
         warnings.push({
-          msg: `Type Mismatch on matching criteria pair #${i+1}: "${colA}" on A is predominantly ${typeA} format, while "${colB}" on Source B is ${typeB}. Direct lookups will fail.`
+          msg: `Lỗi kiểu dữ liệu ở cặp #${i+1}: "${colA}" bên A là dạng ${typeA}, nhưng "${colB}" bên B là dạng ${typeB}. Việc tra cứu sẽ thất bại.`
         });
       }
     }
@@ -80,7 +80,7 @@ class Controller {
     const { keysA, keysB, comparePairs, groupByEnabled } = this.model.schema;
     const minKeysCount = Math.min(keysA.length, keysB.length);
     if (minKeysCount === 0 || !keysA[0] || !keysB[0]) {
-      alert("Please map at least one Row Matching Criteria Key pair.");
+      alert("Vui lòng chọn ít nhất một cặp khoá đối soát.");
       this.view.updateProgressSlider(0);
       return;
     }
@@ -156,10 +156,10 @@ class Controller {
 
       if (rowA && !rowB) {
         status = "Not Found in Source B";
-        discrepancy = `Row key exists only on Source A (File: ${originFileA})`;
+        discrepancy = `Khoá chỉ tồn tại ở nguồn A (Tệp: ${originFileA})`;
       } else if (!rowA && rowB) {
         status = "Not Found in Source A";
-        discrepancy = `Row key exists only on Source B (File: ${originFileB})`;
+        discrepancy = `Khoá chỉ tồn tại ở nguồn B (Tệp: ${originFileB})`;
       } else {
         let isMatched = true;
         const variations = [];
@@ -176,14 +176,14 @@ class Controller {
             const diff = numA - numB;
             if (Math.abs(diff) > 0.0001) {
               isMatched = false;
-              variations.push(`Variance [${diff.toFixed(2)}] at [${pair.colA}]`);
+              variations.push(`Chênh lệch [${diff.toFixed(2)}] tại [${pair.colA}]`);
             }
           } else {
             const normA = this.normalizeValue(valA);
             const normB = this.normalizeValue(valB);
             if (normA !== normB) {
               isMatched = false;
-              variations.push(`Mismatch: [${pair.colA}] "${valA}" vs "${valB}"`);
+              variations.push(`Không khớp: [${pair.colA}] "${valA}" vs "${valB}"`);
             }
           }
         });

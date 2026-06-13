@@ -57,12 +57,12 @@ export default function App() {
               URP
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold tracking-tight text-white leading-tight">
-                Universal Accounting Data Reconciler
-              </h1>
-              <p className="text-[10px] text-indigo-300 font-mono flex items-center gap-1">
-                <span>Ultra Reconciler Pro v1.0 [Full local RAM Engine]</span>
-              </p>
+                <h1 className="text-base sm:text-lg font-bold tracking-tight text-white leading-tight">
+                  Đối Soát Dữ Liệu Kế Toán
+                </h1>
+                <p className="text-[10px] text-indigo-300 font-mono flex items-center gap-1">
+                  <span>Ultra Reconciler Pro v1.0 [Engine xử lý trong RAM]</span>
+                </p>
             </div>
           </div>
           
@@ -72,7 +72,7 @@ export default function App() {
               className="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white font-medium text-xs px-3 py-1.5 border border-slate-700 rounded-md transition duration-150 flex items-center gap-1.5 cursor-pointer shadow-xs"
               id="clear-all-cache-btn"
             >
-              <RefreshCw className="h-3 w-3 text-indigo-400" /> Clear Cache Database
+                <RefreshCw className="h-3 w-3 text-indigo-400" /> Xóa Bộ Nhớ Đệm
             </button>
           </div>
         </div>
@@ -86,11 +86,11 @@ export default function App() {
           <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
             <div className="flex items-center gap-1.5 text-slate-700">
               <Activity className="h-4 w-4 text-indigo-600 animate-pulse" />
-              <span>Real-time Millisecond Processing Stats</span>
+                  <span>Thống kê xử lý thời gian thực</span>
             </div>
             {state.elapsedTime > 0 && (
               <span className="font-mono text-xs bg-indigo-50 border border-indigo-100 text-indigo-700 px-2 py-0.5 rounded shadow-2xs">
-                Speed: {state.elapsedTime} ms / RAM calculation
+                    Tốc độ: {state.elapsedTime} ms / tính toán RAM
               </span>
             )}
           </div>
@@ -110,19 +110,19 @@ export default function App() {
           {/* Source Ledger A */}
           <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col" id="import-block-A">
             <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-600">Source A Ledger</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-600">Sổ Cái Nguồn A</h4>
               <div className="flex gap-1 bg-slate-200 p-0.5 rounded text-[11px] font-sans">
                 <button
                   onClick={() => setActiveInputTabA("file")}
                   className={`px-2.5 py-1 rounded transition ${state.activeInputTabA === "file" ? "bg-white text-slate-800 shadow-xs border border-slate-150 font-medium" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  File / Folders
+                  Tập tin / Thư mục
                 </button>
                 <button
                   onClick={() => setActiveInputTabA("paste")}
                   className={`px-2.5 py-1 rounded transition ${state.activeInputTabA === "paste" ? "bg-white text-slate-800 shadow-xs border border-slate-150 font-medium" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  Ctrl+V Paste
+                  Dán Ctrl+V
                 </button>
               </div>
             </div>
@@ -132,12 +132,11 @@ export default function App() {
                 <div className="flex flex-col gap-3">
                   <div className="border-2 border-dashed border-slate-200 hover:border-indigo-400 rounded-lg p-5 text-center transition flex flex-col items-center justify-center relative cursor-text group gap-1 bg-slate-55">
                     <Upload className="h-6 w-6 text-slate-400 group-hover:text-indigo-500 transition mb-1 stroke-1" />
-                    <span className="text-xs font-semibold text-slate-700">Choose Files or Entire Folder directory</span>
-                    <span className="text-[10px] text-slate-400">Accepts .xlsx, .xls, .csv</span>
+                    <span className="text-xs font-semibold text-slate-700">Chọn tập tin hoặc thư mục</span>
+                    <span className="text-[10px] text-slate-400">Chấp nhận .xlsx, .xls, .csv</span>
                     <input
                       type="file"
                       multiple
-                      {...({ webkitdirectory: "", directory: "" } as any)}
                       onChange={handleFileUploadA}
                       className="absolute inset-0 opacity-0 cursor-pointer"
                       id="source-A-uploader"
@@ -147,7 +146,7 @@ export default function App() {
               ) : (
                 <div className="flex flex-col gap-2">
                   <textarea
-                    placeholder="Enter CSV columns separated by tab or commas. E.g.&#10;Transaction_ID,Amount,Post_Date&#10;TXN1001,1525.00,2026-06-11&#10;TXN1002,450.99,2026-06-12"
+                    placeholder="Nhập CSV, cột cách nhau bằng tab hoặc dấu phẩy. VD:&#10;Transaction_ID,Amount,Post_Date&#10;TXN1001,1525.00,2026-06-11&#10;TXN1002,450.99,2026-06-12"
                     value={state.pasteA}
                     onChange={(e) => setPasteA(e.target.value)}
                     className="w-full h-24 p-2.5 font-mono text-[10px] bg-slate-55 border border-slate-200 rounded-md shadow-inner outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none leading-normal"
@@ -158,7 +157,7 @@ export default function App() {
                     className="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded shadow-xs transition"
                     id="source-A-paste-btn"
                   >
-                    Parse Paste Text
+                    Phân tích văn bản đã dán
                   </button>
                 </div>
               )}
@@ -168,19 +167,19 @@ export default function App() {
           {/* Source Ledger B */}
           <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col" id="import-block-B">
             <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-600">Source B Ledger</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-600">Sổ Cái Nguồn B</h4>
               <div className="flex gap-1 bg-slate-200 p-0.5 rounded text-[11px] font-sans">
                 <button
                   onClick={() => setActiveInputTabB("file")}
                   className={`px-2.5 py-1 rounded transition ${state.activeInputTabB === "file" ? "bg-white text-slate-800 shadow-xs border border-slate-150 font-medium" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  File / Folders
+                  Tập tin / Thư mục
                 </button>
                 <button
                   onClick={() => setActiveInputTabB("paste")}
                   className={`px-2.5 py-1 rounded transition ${state.activeInputTabB === "paste" ? "bg-white text-slate-800 shadow-xs border border-slate-150 font-medium" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  Ctrl+V Paste
+                  Dán Ctrl+V
                 </button>
               </div>
             </div>
@@ -190,12 +189,11 @@ export default function App() {
                 <div className="flex flex-col gap-3">
                   <div className="border-2 border-dashed border-slate-200 hover:border-indigo-400 rounded-lg p-5 text-center transition flex flex-col items-center justify-center relative cursor-text group gap-1 bg-slate-55">
                     <Upload className="h-6 w-6 text-slate-400 group-hover:text-indigo-500 transition mb-1 stroke-1" />
-                    <span className="text-xs font-semibold text-slate-700">Choose Files or Entire Folder directory</span>
-                    <span className="text-[10px] text-slate-400">Accepts .xlsx, .xls, .csv</span>
+                    <span className="text-xs font-semibold text-slate-700">Chọn tập tin hoặc thư mục</span>
+                    <span className="text-[10px] text-slate-400">Chấp nhận .xlsx, .xls, .csv</span>
                     <input
                       type="file"
                       multiple
-                      {...({ webkitdirectory: "", directory: "" } as any)}
                       onChange={handleFileUploadB}
                       className="absolute inset-0 opacity-0 cursor-pointer"
                       id="source-B-uploader"
@@ -205,7 +203,7 @@ export default function App() {
               ) : (
                 <div className="flex flex-col gap-2">
                   <textarea
-                    placeholder="Enter CSV columns separated by tab or commas. E.g.&#10;Txn_No,Total_Val,Txn_Date&#10;1001,1525.00,2026-06-11&#10;1002,450.00,2026-06-12"
+                    placeholder="Nhập CSV, cột cách nhau bằng tab hoặc dấu phẩy. VD:&#10;Txn_No,Total_Val,Txn_Date&#10;1001,1525.00,2026-06-11&#10;1002,450.00,2026-06-12"
                     value={state.pasteB}
                     onChange={(e) => setPasteB(e.target.value)}
                     className="w-full h-24 p-2.5 font-mono text-[10px] bg-slate-55 border border-slate-200 rounded-md shadow-inner outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none leading-normal"
@@ -216,7 +214,7 @@ export default function App() {
                     className="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded shadow-xs transition"
                     id="source-B-paste-btn"
                   >
-                    Parse Paste Text
+                    Phân tích văn bản đã dán
                   </button>
                 </div>
               )}
@@ -228,7 +226,7 @@ export default function App() {
         {/* Dynamic Preview Excel Grids Side-by-Side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
           <DataGrid
-            title="Preview Ledger Source A"
+            title="Xem trước Sổ Cái Nguồn A"
             sourceLabel="Source A"
             headers={state.sourceA.headers}
             rows={state.sourceA.rows}
@@ -239,7 +237,7 @@ export default function App() {
             }}
           />
           <DataGrid
-            title="Preview Ledger Source B"
+            title="Xem trước Sổ Cái Nguồn B"
             sourceLabel="Source B"
             headers={state.sourceB.headers}
             rows={state.sourceB.rows}
@@ -282,12 +280,12 @@ export default function App() {
                 <div className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-5 w-5 text-emerald-600" />
                   <div>
-                    <h3 className="font-bold text-sm text-slate-800 tracking-tight">Audit Output Report Summary</h3>
+                    <h3 className="font-bold text-sm text-slate-800 tracking-tight">Báo cáo kết quả đối soát</h3>
                     <p className="text-[11px] text-slate-500 font-medium">
-                      Matched: <span className="text-emerald-600 font-semibold">{matchedCount}</span> | 
-                      Unmatched: <span className="text-rose-600 font-semibold">{unmatchedCount}</span> | 
-                      Missing In B: <span className="text-amber-600 font-semibold">{onlyACount}</span> | 
-                      Missing In A: <span className="text-amber-605 font-semibold">{onlyBCount}</span>
+                      Khớp: <span className="text-emerald-600 font-semibold">{matchedCount}</span> | 
+                      Lệch: <span className="text-rose-600 font-semibold">{unmatchedCount}</span> | 
+                      Thiếu trong B: <span className="text-amber-600 font-semibold">{onlyACount}</span> | 
+                      Thiếu trong A: <span className="text-amber-605 font-semibold">{onlyBCount}</span>
                     </p>
                   </div>
                 </div>
@@ -298,7 +296,7 @@ export default function App() {
                   className="bg-indigo-700 hover:bg-indigo-800 active:scale-98 text-white px-4 py-2 font-semibold text-xs rounded-md shadow-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
                   id="final-download-excel-btn"
                 >
-                  <Download className="h-4 w-4" /> Download 3-Sheet Report Spreadsheet
+                  <Download className="h-4 w-4" /> Tải xuống báo cáo Excel 3 trang
                 </button>
               </div>
 
@@ -340,12 +338,12 @@ export default function App() {
                       })}
 
                       {/* Origin Files provenance tracking */}
-                      <th className="px-3 py-2 border-r border-slate-200 min-w-[140px] text-slate-500 font-medium">Origin A</th>
-                      <th className="px-3 py-2 border-r border-slate-200 min-w-[140px] text-slate-500 font-medium">Origin B</th>
+                      <th className="px-3 py-2 border-r border-slate-200 min-w-[140px] text-slate-500 font-medium">Nguồn gốc A</th>
+                      <th className="px-3 py-2 border-r border-slate-200 min-w-[140px] text-slate-500 font-medium">Nguồn gốc B</th>
 
                       {/* Append Audit Results Columns */}
-                      <th className="px-3 py-2 border-r border-slate-200 text-slate-900 font-semibold">Status</th>
-                      <th className="px-3 py-2 min-w-[180px] text-slate-900 font-semibold">Variance / Discrepancy Recommendation</th>
+                      <th className="px-3 py-2 border-r border-slate-200 text-slate-900 font-semibold">Trạng thái</th>
+                      <th className="px-3 py-2 min-w-[180px] text-slate-900 font-semibold">Chênh lệch / Đề xuất</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 divide-x-0">
@@ -404,7 +402,7 @@ export default function App() {
                             </span>
                           </td>
                           <td className="px-3 py-2 text-slate-600 font-medium break-all">
-                            {item.discrepancy || <span className="text-emerald-600">Equivalence matches verified.</span>}
+                            {item.discrepancy || <span className="text-emerald-600">Giá trị khớp, không chênh lệch.</span>}
                           </td>
                         </tr>
                       );
@@ -426,7 +424,7 @@ export default function App() {
       {/* Humble Footer */}
       <footer className="bg-slate-900 border-t border-indigo-950 text-slate-400 font-mono text-[10px] py-6 text-center mt-auto uppercase tracking-wider relative">
         <div className="max-w-7xl mx-auto px-4">
-          All data computations executed serverless in RAM • Designed by Senior Accounting System Architect
+          Tính toán dữ liệu trong RAM • Thiết kế bởi Kiến trúc sư Hệ thống Kế toán
         </div>
       </footer>
     </div>
