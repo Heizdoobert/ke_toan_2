@@ -10,11 +10,8 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Lucide Vector Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    /* Premium custom overrides for corporate accounting sheet aesthetics */
-    .bg-slate-55 { background-color: rgba(248, 250, 252, 0.65); }
-    .border-slate-150 { border-color: rgba(226, 232, 240, 0.82); }
-  </style>
+  <!-- Premium custom overrides for corporate accounting sheet aesthetics -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col">
   <!-- Corporate Header -->
@@ -164,6 +161,10 @@
   </footer>
 
   <!-- Connect standalone vanilla MVC execution controller scripts -->
+  <script src="js/database.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/view.js"></script>
+  <script src="js/controller.js"></script>
   <script src="app.js"></script>
   <script>
     // Initialize icons
